@@ -85,7 +85,7 @@ public class Chip8 extends Application {
         this.mainStage = stage;
         initializeStage();
         //this.loadROM("games/Rush Hour [Hap, 2006].ch8");
-        this.loadROM("tests/7-beep.ch8");
+        this.loadROM("demos/Trip8 Demo (2008) [Revival Studios].ch8");
     }
 
     public ExecutionWorker getExecutionWorker() {

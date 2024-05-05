@@ -7,6 +7,8 @@ import java.util.Random;
 
 public class ExecutionWorker extends Thread {
 
+    private static final int OPPS = 4000;
+
     private static final String PATH = "C:\\Users\\tolle\\IdeaProjects\\CHIP-8\\src\\main\\resources\\roms\\";
     private static final int START_ADDRESS = 0x200;
     private static final int FONTSET_SIZE = 80;
@@ -44,6 +46,7 @@ public class ExecutionWorker extends Thread {
     private final SoundMaker soundMaker;
 
     private final Object lock = new Object();
+    private final Object sleep = new Object();
 
     public ExecutionWorker(String filename, Screen video, Keyboard keyboard, SoundMaker soundMaker) {
         this.registers = new int[16];
@@ -89,12 +92,15 @@ public class ExecutionWorker extends Thread {
         if (this.delayTimer > 0) --this.delayTimer;
         if (this.soundTimer > 0) {
             --this.soundTimer;
-            //TODO: Ajouter le support du son
-            System.out.println("Make sound!");
-        }
+            this.soundMaker.playBuzzer();
+        } else this.soundMaker.stopBuzzer();
     }
 
     public void cycle() throws InterruptedException {
+        synchronized (sleep) {
+            //sleep.wait((long) 1000 / OPPS);
+        }
+
         opcode = (memory[pc] << 8) | memory[pc + 1];
         pc += 2;
 
