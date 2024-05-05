@@ -29,6 +29,7 @@ public class Chip8 extends Application {
 
     public Chip8() {
         keyboard = new Keyboard(this);
+        video = new Screen();
         executionWorker = null;
     }
 
@@ -42,7 +43,6 @@ public class Chip8 extends Application {
     }
 
     private void initializeStage() {
-        video = new Screen();
         video.render();
 
         mainStage.setTitle("CHIP-8");
@@ -82,7 +82,8 @@ public class Chip8 extends Application {
     public void start(Stage stage) {
         mainStage = stage;
         initializeStage();
-        this.loadROM("games/Rush Hour [Hap, 2006].ch8");
+        //this.loadROM("games/Rush Hour [Hap, 2006].ch8");
+        this.loadROM("tests/7-beep.ch8");
     }
 
     public ExecutionWorker getExecutionWorker() {

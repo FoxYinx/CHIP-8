@@ -17,28 +17,34 @@ public class Keyboard {
     }
 
     public void setDown(KeyCode code) {
-        if (!keyboard[getKey(code.getName())]) {
-            synchronized (chip8.getExecutionWorker().getLock()) {
-                chip8.getExecutionWorker().getLock().notify();
+        int key = getKey(code.getName());
+        if (key != -1) {
+            if (!keyboard[key]) {
+                synchronized (chip8.getExecutionWorker().getLock()) {
+                    chip8.getExecutionWorker().getLock().notify();
+                }
             }
+            keyboard[key] = true;
         }
-        keyboard[getKey(code.getName())] = true;
     }
 
     public void setUp(KeyCode code) {
-        if (keyboard[getKey(code.getName())]) {
-            synchronized (chip8.getExecutionWorker().getLock()) {
-                chip8.getExecutionWorker().getLock().notify();
+        int key = getKey(code.getName());
+        if (key != -1) {
+            if (keyboard[key]) {
+                synchronized (chip8.getExecutionWorker().getLock()) {
+                    chip8.getExecutionWorker().getLock().notify();
+                }
             }
+            keyboard[key] = false;
         }
-        keyboard[getKey(code.getName())] = false;
     }
 
     private int getKey(String name) {
         return switch (name) {
             case "1" -> 1;
             case "2", "Up", "Numpad 8" -> 2;
-            case "3" ->3;
+            case "3" -> 3;
             case "4" -> 12;
             case "A", "Left", "Numpad 4" -> 4;
             case "Z" -> 5;
