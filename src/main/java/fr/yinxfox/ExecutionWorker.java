@@ -7,7 +7,7 @@ import java.util.Random;
 
 public class ExecutionWorker extends Thread {
 
-    private static final int OPPS = 4000;
+    private static final int OPPS = 500;
 
     private static final String PATH = "C:\\Users\\tolle\\IdeaProjects\\CHIP-8\\src\\main\\resources\\roms\\";
     private static final int START_ADDRESS = 0x200;
@@ -98,7 +98,7 @@ public class ExecutionWorker extends Thread {
 
     public void cycle() throws InterruptedException {
         synchronized (sleep) {
-            //sleep.wait((long) 1000 / OPPS);
+            sleep.wait((long) 1000 / OPPS);
         }
 
         opcode = (memory[pc] << 8) | memory[pc + 1];
