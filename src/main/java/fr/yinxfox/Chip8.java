@@ -61,12 +61,7 @@ public class Chip8 extends Application {
                         Event -> {
                             if (executionWorker != null) {
                                 Platform.runLater(() -> this.video.render());
-                                if (executionWorker.delayTimer > 0) --executionWorker.delayTimer;
-                                if (executionWorker.soundTimer > 0) {
-                                    --executionWorker.soundTimer;
-                                    //TODO: Ajouter le support du son
-                                    System.out.println("Make sound!");
-                                }
+                                executionWorker.updateTimers();
                             }
                         })
         );
@@ -87,7 +82,7 @@ public class Chip8 extends Application {
     public void start(Stage stage) {
         mainStage = stage;
         initializeStage();
-        this.loadROM("games/Connect 4 [David Winter].ch8");
+        this.loadROM("games/Rush Hour [Hap, 2006].ch8");
     }
 
     public ExecutionWorker getExecutionWorker() {

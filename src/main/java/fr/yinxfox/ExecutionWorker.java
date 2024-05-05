@@ -37,12 +37,12 @@ public class ExecutionWorker extends Thread {
     private int pc;
     private int sp;
     private int index;
-    private int[] stack;
+    private final int[] stack;
     private int opcode;
-    public int delayTimer;
-    public int soundTimer;
-    private Screen video;
-    private Keyboard keyboard;
+    private int delayTimer;
+    private int soundTimer;
+    private final Screen video;
+    private final Keyboard keyboard;
 
     private final Object lock = new Object();
 
@@ -82,6 +82,15 @@ public class ExecutionWorker extends Thread {
             } catch (InterruptedException e) {
                 break;
             }
+        }
+    }
+
+    public void updateTimers() {
+        if (delayTimer > 0) --delayTimer;
+        if (soundTimer > 0) {
+            --soundTimer;
+            //TODO: Ajouter le support du son
+            System.out.println("Make sound!");
         }
     }
 
