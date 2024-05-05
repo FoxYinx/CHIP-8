@@ -1,7 +1,5 @@
 package fr.yinxfox;
 
-import javafx.application.Platform;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,20 +41,21 @@ public class ExecutionWorker extends Thread {
     private int soundTimer;
     private final Screen video;
     private final Keyboard keyboard;
+    private final SoundMaker soundMaker;
 
     private final Object lock = new Object();
 
-    public ExecutionWorker(String filename, Screen video, Keyboard keyboard) {
-        registers = new int[16];
-        memory = new int[4096];
-        index = 0;
-        pc = START_ADDRESS;
-        stack = new int[16];
-        sp = 0;
-        delayTimer = 0;
-        soundTimer = 0;
-        opcode = 0x0000;
-        System.arraycopy(FONTSET, 0, memory, FONTSET_START_ADDRESS, FONTSET_SIZE);
+    public ExecutionWorker(String filename, Screen video, Keyboard keyboard, SoundMaker soundMaker) {
+        this.registers = new int[16];
+        this.memory = new int[4096];
+        this.index = 0;
+        this.pc = START_ADDRESS;
+        this.stack = new int[16];
+        this.sp = 0;
+        this.delayTimer = 0;
+        this.soundTimer = 0;
+        this.opcode = 0x0000;
+        System.arraycopy(FONTSET, 0, this.memory, FONTSET_START_ADDRESS, FONTSET_SIZE);
 
         byte[] data;
         try {
@@ -65,11 +64,12 @@ public class ExecutionWorker extends Thread {
             throw new RuntimeException(e);
         }
         for (int i = 0; i < data.length; i++) {
-            memory[START_ADDRESS + i] = data[i] & 0xFF;
+            this.memory[START_ADDRESS + i] = data[i] & 0xFF;
         }
 
         this.video = video;
         this.keyboard = keyboard;
+        this.soundMaker = soundMaker;
 
         this.start();
     }
@@ -86,9 +86,9 @@ public class ExecutionWorker extends Thread {
     }
 
     public void updateTimers() {
-        if (delayTimer > 0) --delayTimer;
-        if (soundTimer > 0) {
-            --soundTimer;
+        if (this.delayTimer > 0) --this.delayTimer;
+        if (this.soundTimer > 0) {
+            --this.soundTimer;
             //TODO: Ajouter le support du son
             System.out.println("Make sound!");
         }

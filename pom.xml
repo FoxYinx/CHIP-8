@@ -41,6 +41,12 @@
             <version>21</version>
             <classifier>linux</classifier>
         </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-media</artifactId>
+            <version>21</version>
+            <classifier>linux</classifier>
+        </dependency>
 
         <!-- JavaFX - Windows -->
         <dependency>
@@ -67,6 +73,12 @@
             <version>21</version>
             <classifier>win</classifier>
         </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-media</artifactId>
+            <version>21</version>
+            <classifier>win</classifier>
+        </dependency>
 
         <!-- JavaFX - Mac -->
         <dependency>
@@ -90,6 +102,12 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
+            <version>21</version>
+            <classifier>mac</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-media</artifactId>
             <version>21</version>
             <classifier>mac</classifier>
         </dependency>

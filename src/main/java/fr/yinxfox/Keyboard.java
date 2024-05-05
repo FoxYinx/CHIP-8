@@ -5,38 +5,38 @@ import javafx.scene.input.KeyCode;
 public class Keyboard {
 
     private final boolean[] keyboard;
-    private Chip8 chip8;
+    private final Chip8 chip8;
 
     public Keyboard(Chip8 chip8) {
-        keyboard = new boolean[16];
+        this.keyboard = new boolean[16];
         this.chip8 = chip8;
     }
 
     public boolean isPressed(int key) {
-        return keyboard[key];
+        return this.keyboard[key];
     }
 
     public void setDown(KeyCode code) {
         int key = getKey(code.getName());
         if (key != -1) {
-            if (!keyboard[key]) {
-                synchronized (chip8.getExecutionWorker().getLock()) {
-                    chip8.getExecutionWorker().getLock().notify();
+            if (!this.keyboard[key]) {
+                synchronized (this.chip8.getExecutionWorker().getLock()) {
+                    this.chip8.getExecutionWorker().getLock().notify();
                 }
             }
-            keyboard[key] = true;
+            this.keyboard[key] = true;
         }
     }
 
     public void setUp(KeyCode code) {
         int key = getKey(code.getName());
         if (key != -1) {
-            if (keyboard[key]) {
-                synchronized (chip8.getExecutionWorker().getLock()) {
-                    chip8.getExecutionWorker().getLock().notify();
+            if (this.keyboard[key]) {
+                synchronized (this.chip8.getExecutionWorker().getLock()) {
+                    this.chip8.getExecutionWorker().getLock().notify();
                 }
             }
-            keyboard[key] = false;
+            this.keyboard[key] = false;
         }
     }
 

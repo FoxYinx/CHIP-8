@@ -23,55 +23,57 @@ public class Chip8 extends Application {
     private Stage mainStage;
 
     private final Keyboard keyboard;
-    private Screen video;
+    private final Screen video;
+    private final SoundMaker soundMaker;
     private ExecutionWorker executionWorker;
     private Timeline timeline;
 
     public Chip8() {
-        keyboard = new Keyboard(this);
-        video = new Screen();
-        executionWorker = null;
+        this.keyboard = new Keyboard(this);
+        this.video = new Screen();
+        this.executionWorker = null;
+        this.soundMaker = new SoundMaker();
     }
 
     private void loadROM(String filename) {
-        timeline.stop();
-        if (executionWorker != null) executionWorker.interrupt();
-        video.clear();
-        executionWorker = new ExecutionWorker(filename, video, keyboard);
+        this.timeline.stop();
+        if (this.executionWorker != null) this.executionWorker.interrupt();
+        this.video.clear();
+        this.executionWorker = new ExecutionWorker(filename, this.video, this.keyboard, this.soundMaker);
         System.out.println(filename + " has been loaded!");
-        timeline.play();
+        this.timeline.play();
     }
 
     private void initializeStage() {
-        video.render();
+        this.video.render();
 
-        mainStage.setTitle("CHIP-8");
-        mainStage.setMinWidth(WIDTH + 16);
-        mainStage.setMaxWidth(WIDTH + 16);
-        mainStage.setMinHeight(HEIGHT + 39);
-        mainStage.setMaxHeight(HEIGHT + 39);
-        mainStage.setResizable(false);
+        this.mainStage.setTitle("CHIP-8");
+        this.mainStage.setMinWidth(WIDTH + 16);
+        this.mainStage.setMaxWidth(WIDTH + 16);
+        this.mainStage.setMinHeight(HEIGHT + 39);
+        this.mainStage.setMaxHeight(HEIGHT + 39);
+        this.mainStage.setResizable(false);
 
         VBox root = new VBox();
-        root.getChildren().add(video);
+        root.getChildren().add(this.video);
         Scene mainScene = new Scene(root);
 
-        timeline = new Timeline(
+        this.timeline = new Timeline(
                 new KeyFrame(Duration.seconds((double) 1 / FPS),
                         Event -> {
-                            if (executionWorker != null) {
-                                Platform.runLater(() -> this.video.render());
-                                executionWorker.updateTimers();
+                            if (this.executionWorker != null) {
+                                Platform.runLater(this.video::render);
+                                this.executionWorker.updateTimers();
                             }
                         })
         );
-        timeline.setCycleCount(Animation.INDEFINITE);
+        this.timeline.setCycleCount(Animation.INDEFINITE);
 
-        mainScene.setOnKeyPressed(keyEvent -> keyboard.setDown(keyEvent.getCode()));
-        mainScene.setOnKeyReleased(keyEvent -> keyboard.setUp(keyEvent.getCode()));
+        mainScene.setOnKeyPressed(keyEvent -> this.keyboard.setDown(keyEvent.getCode()));
+        mainScene.setOnKeyReleased(keyEvent -> this.keyboard.setUp(keyEvent.getCode()));
 
-        mainStage.setScene(mainScene);
-        mainStage.show();
+        this.mainStage.setScene(mainScene);
+        this.mainStage.show();
     }
 
     public static void main(String[] args) {
@@ -80,13 +82,13 @@ public class Chip8 extends Application {
 
     @Override
     public void start(Stage stage) {
-        mainStage = stage;
+        this.mainStage = stage;
         initializeStage();
         //this.loadROM("games/Rush Hour [Hap, 2006].ch8");
         this.loadROM("tests/7-beep.ch8");
     }
 
     public ExecutionWorker getExecutionWorker() {
-        return executionWorker;
+        return this.executionWorker;
     }
 }

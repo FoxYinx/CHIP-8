@@ -18,16 +18,16 @@ public class Screen extends Canvas {
         super(WIDTH * scale, HEIGHT * scale);
         setFocusTraversable(true);
 
-        graphicsContext = this.getGraphicsContext2D();
-        graphicsContext.setFill(Color.BLACK);
-        graphicsContext.fill();
+        this.graphicsContext = this.getGraphicsContext2D();
+        this.graphicsContext.setFill(Color.BLACK);
+        this.graphicsContext.fill();
         clear();
     }
 
     public void clear() {
         for (int x = 0; x < WIDTH; x++) {
             for (int y = 0; y < HEIGHT; y++) {
-                video[x][y] = 0;
+                this.video[x][y] = 0;
             }
         }
     }
@@ -35,7 +35,7 @@ public class Screen extends Canvas {
     public void render() {
         for(int x = 0; x < WIDTH; x++) {
             for(int y = 0; y < HEIGHT; y++) {
-                if (video[x][y] == 1) {
+                if (this.video[x][y] == 1) {
                     graphicsContext.setFill(Color.WHITE);
                 } else {
                     graphicsContext.setFill(Color.BLACK);
@@ -59,7 +59,7 @@ public class Screen extends Canvas {
 
     public boolean draw(int xPos, int col, int yPos, int row) {
         int screenPixel = video[xPos + col][yPos + row];
-        video[xPos + col][yPos + row] ^= 1;
+        this.video[xPos + col][yPos + row] ^= 1;
         return screenPixel == 1;
     }
 }
