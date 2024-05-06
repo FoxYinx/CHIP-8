@@ -47,6 +47,8 @@ public class Chip8 extends Application {
     private void initializeStage() {
         this.video.render();
 
+        //Fixme: l'affichage est trop grand sous Linux (ajouter la détection de l'OS)
+
         this.mainStage.setTitle("CHIP-8");
         this.mainStage.setMinWidth(WIDTH + 16);
         this.mainStage.setMaxWidth(WIDTH + 16);

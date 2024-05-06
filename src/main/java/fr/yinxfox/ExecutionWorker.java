@@ -9,7 +9,7 @@ public class ExecutionWorker extends Thread {
 
     private static final int OPPS = 500;
 
-    private static final String PATH = "C:\\Users\\tolle\\IdeaProjects\\CHIP-8\\src\\main\\resources\\roms\\";
+    private static final String PATH = "src/main/resources/roms/";
     private static final int START_ADDRESS = 0x200;
     private static final int FONTSET_SIZE = 80;
     private static final int FONTSET_START_ADDRESS = 0x50;
