@@ -10,10 +10,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Random;
+import java.util.Scanner;
 
 public class Chip8 extends Application {
 
@@ -85,6 +82,19 @@ public class Chip8 extends Application {
     }
 
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Choose which system to launch:");
+        System.out.println("1 - CHIP-8");
+        System.out.println("2 - SUPER CHIP-8");
+        System.out.println("3 - XO-CHIP-8");
+        Hardware hardware = Hardware.NULL;
+        while (hardware == Hardware.NULL) {
+            switch (scanner.nextLine()){
+                case "1" -> hardware = Hardware.CHIP8;
+                case "2" -> hardware = Hardware.SCHIP8;
+                case "3" -> hardware = Hardware.XOCHIP8;
+            }
+        }
         launch();
     }
 
