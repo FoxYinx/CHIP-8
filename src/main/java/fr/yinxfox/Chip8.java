@@ -20,6 +20,7 @@ public class Chip8 extends Application {
     private static final int WIDTH = Screen.getWIDTH() * Screen.getScale();
     private static final int HEIGHT = Screen.getHEIGHT() * Screen.getScale();
     private static final double FPS = 60;
+    private static boolean isWindows;
     private Stage mainStage;
 
     private final Keyboard keyboard;
@@ -47,13 +48,18 @@ public class Chip8 extends Application {
     private void initializeStage() {
         this.video.render();
 
-        //Fixme: l'affichage est trop grand sous Linux (ajouter la détection de l'OS)
-
         this.mainStage.setTitle("CHIP-8");
-        this.mainStage.setMinWidth(WIDTH + 16);
-        this.mainStage.setMaxWidth(WIDTH + 16);
-        this.mainStage.setMinHeight(HEIGHT + 39);
-        this.mainStage.setMaxHeight(HEIGHT + 39);
+        if (isWindows) {
+            this.mainStage.setMinWidth(WIDTH + 16);
+            this.mainStage.setMaxWidth(WIDTH + 16);
+            this.mainStage.setMinHeight(HEIGHT + 39);
+            this.mainStage.setMaxHeight(HEIGHT + 39);
+        } else {
+            this.mainStage.setMinWidth(WIDTH);
+            this.mainStage.setMaxWidth(WIDTH);
+            this.mainStage.setMinHeight(HEIGHT);
+            this.mainStage.setMaxHeight(HEIGHT);
+        }
         this.mainStage.setResizable(false);
 
         VBox root = new VBox();
@@ -84,6 +90,7 @@ public class Chip8 extends Application {
 
     @Override
     public void start(Stage stage) {
+        isWindows = System.getProperty("os.name").contains("Windows");
         this.mainStage = stage;
         initializeStage();
         //this.loadROM("games/Rush Hour [Hap, 2006].ch8");
