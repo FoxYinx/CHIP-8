@@ -8,6 +8,7 @@ import java.util.Random;
 public class ExecutionWorker extends Thread {
 
     private static final int OPPS = 500;
+    private static final boolean UNLOCKED = true;
 
     private static final String PATH = "src/main/resources/roms/";
     private static final int START_ADDRESS = 0x200;
@@ -99,8 +100,10 @@ public class ExecutionWorker extends Thread {
     }
 
     public void cycle() throws InterruptedException {
-        synchronized (sleep) {
-            sleep.wait((long) 1000 / OPPS);
+        if (!UNLOCKED) {
+            synchronized (sleep) {
+                sleep.wait((long) 1000 / OPPS);
+            }
         }
 
         opcode = (memory[pc] << 8) | memory[pc + 1];
