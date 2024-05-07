@@ -22,7 +22,7 @@ public class Chip8 extends Application {
 
     private final Keyboard keyboard;
     private final Screen video;
-    private final SoundMaker soundMaker;
+    private SoundMaker soundMaker;
     private ExecutionWorker executionWorker;
     private Timeline timeline;
 
@@ -30,7 +30,7 @@ public class Chip8 extends Application {
         this.keyboard = new Keyboard(this);
         this.video = new Screen();
         this.executionWorker = null;
-        this.soundMaker = new SoundMaker();
+        if (isWindows) this.soundMaker = new SoundMaker();
     }
 
     private void loadROM(String filename) {
@@ -103,11 +103,15 @@ public class Chip8 extends Application {
         isWindows = System.getProperty("os.name").contains("Windows");
         this.mainStage = stage;
         initializeStage();
-        //this.loadROM("games/Rush Hour [Hap, 2006].ch8");
-        this.loadROM("demos/Trip8 Demo (2008) [Revival Studios].ch8");
+        this.loadROM("games/Rush Hour [Hap, 2006].ch8");
+        //this.loadROM("demos/Trip8 Demo (2008) [Revival Studios].ch8");
     }
 
     public ExecutionWorker getExecutionWorker() {
         return this.executionWorker;
+    }
+
+    public static boolean getIsWindows() {
+        return isWindows;
     }
 }
