@@ -69,11 +69,20 @@ public class Chip8 extends Application {
         Menu menuHardware = new Menu("Hardware");
         RadioMenuItem chip8Item = new RadioMenuItem("CHIP-8");
         chip8Item.setSelected(true);
-        chip8Item.setOnAction(actionEvent -> hardware = Hardware.CHIP8);
+        chip8Item.setOnAction(actionEvent -> {
+            hardware = Hardware.CHIP8;
+            this.mainStage.setTitle(hardware.toString());
+        });
         RadioMenuItem schip8Item = new RadioMenuItem("SCHIP-8");
-        schip8Item.setOnAction(actionEvent -> hardware = Hardware.SCHIP8);
+        schip8Item.setOnAction(actionEvent -> {
+            hardware = Hardware.SCHIP8;
+            this.mainStage.setTitle(hardware.toString());
+        });
         RadioMenuItem xochipItem = new RadioMenuItem("XO-CHIP");
-        xochipItem.setOnAction(actionEvent -> hardware = Hardware.XOCHIP);
+        xochipItem.setOnAction(actionEvent -> {
+            hardware = Hardware.XOCHIP;
+            this.mainStage.setTitle(hardware.toString());
+        });
         chip8Item.setToggleGroup(hardwareGroup);
         schip8Item.setToggleGroup(hardwareGroup);
         xochipItem.setToggleGroup(hardwareGroup);
@@ -112,15 +121,15 @@ public class Chip8 extends Application {
 
         this.mainStage.setTitle(hardware.toString());
         if (isWindows) {
-            this.mainStage.setMinWidth(Math.floor(mainScene.getWidth()) + 16);
-            this.mainStage.setMaxWidth(Math.floor(mainScene.getWidth()) + 16);
-            this.mainStage.setMinHeight(Math.floor(mainScene.getHeight()) + 39);
-            this.mainStage.setMaxHeight(Math.floor(mainScene.getHeight()) + 39);
+            this.mainStage.setMinWidth(mainScene.getWidth() + 16);
+            this.mainStage.setMaxWidth(mainScene.getWidth() + 16);
+            this.mainStage.setMinHeight(mainScene.getHeight() + 39);
+            this.mainStage.setMaxHeight(mainScene.getHeight() + 39);
         } else {
-            this.mainStage.setMinWidth(Math.floor(mainScene.getWidth()));
-            this.mainStage.setMaxWidth(Math.floor(mainScene.getWidth()));
-            this.mainStage.setMinHeight(Math.floor(mainScene.getHeight()));
-            this.mainStage.setMaxHeight(Math.floor(mainScene.getHeight()));
+            this.mainStage.setMinWidth(mainScene.getWidth());
+            this.mainStage.setMaxWidth(mainScene.getWidth());
+            this.mainStage.setMinHeight(mainScene.getHeight());
+            this.mainStage.setMaxHeight(mainScene.getHeight());
         }
     }
 
