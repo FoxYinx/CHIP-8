@@ -4,8 +4,6 @@ import javafx.scene.input.KeyCode;
 
 public class Keyboard {
 
-    //Fixme: Upper row not usable on Linux
-
     private final boolean[] keyboard;
     private final Chip8 chip8;
 
@@ -19,7 +17,7 @@ public class Keyboard {
     }
 
     public void setDown(KeyCode code) {
-        int key = getKey(code.getName());
+        int key = getKey(code.getCode());
         if (key != -1) {
             if (!this.keyboard[key]) {
                 synchronized (this.chip8.getExecutionWorker().getLock()) {
@@ -31,7 +29,7 @@ public class Keyboard {
     }
 
     public void setUp(KeyCode code) {
-        int key = getKey(code.getName());
+        int key = getKey(code.getCode());
         if (key != -1) {
             if (this.keyboard[key]) {
                 synchronized (this.chip8.getExecutionWorker().getLock()) {
@@ -42,24 +40,24 @@ public class Keyboard {
         }
     }
 
-    private int getKey(String name) {
-        return switch (name) {
-            case "1" -> 1;
-            case "2", "Up", "Numpad 8" -> 2;
-            case "3" -> 3;
-            case "4" -> 12;
-            case "A", "Left", "Numpad 4" -> 4;
-            case "Z" -> 5;
-            case "E", "Right", "Numpad 6" -> 6;
-            case "R" -> 13;
-            case "Q" -> 7;
-            case "S", "Down", "Numpad 2" -> 8;
-            case "D" -> 9;
-            case "F" -> 14;
-            case "W" -> 10;
-            case "X" -> 0;
-            case "C" -> 11;
-            case "V" -> 15;
+    private int getKey(int code) {
+        return switch (code) {
+            case 150 -> 1;
+            case 0, 38, 104 -> 2;
+            case 152 -> 3;
+            case 222 -> 12;
+            case 65, 37, 100 -> 4;
+            case 90 -> 5;
+            case 69, 39, 102 -> 6;
+            case 82 -> 13;
+            case 81 -> 7;
+            case 83, 40, 98 -> 8;
+            case 68 -> 9;
+            case 70 -> 14;
+            case 87 -> 10;
+            case 88 -> 0;
+            case 67 -> 11;
+            case 86 -> 15;
 
             default -> -1;
         };
