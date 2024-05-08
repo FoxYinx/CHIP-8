@@ -12,14 +12,13 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 import java.io.File;
 import java.util.Scanner;
 
 public class Chip8 extends Application {
-
-    //Fixme: White line appearing on bottom row
 
     private static final double FPS = 60;
     private static boolean isWindows;
@@ -113,15 +112,15 @@ public class Chip8 extends Application {
 
         this.mainStage.setTitle(hardware.toString());
         if (isWindows) {
-            this.mainStage.setMinWidth(mainScene.getWidth() + 16);
-            this.mainStage.setMaxWidth(mainScene.getWidth() + 16);
-            this.mainStage.setMinHeight(mainScene.getHeight() + 39);
-            this.mainStage.setMaxHeight(mainScene.getHeight() + 39);
+            this.mainStage.setMinWidth(Math.floor(mainScene.getWidth()) + 16);
+            this.mainStage.setMaxWidth(Math.floor(mainScene.getWidth()) + 16);
+            this.mainStage.setMinHeight(Math.floor(mainScene.getHeight()) + 39);
+            this.mainStage.setMaxHeight(Math.floor(mainScene.getHeight()) + 39);
         } else {
-            this.mainStage.setMinWidth(mainScene.getWidth());
-            this.mainStage.setMaxWidth(mainScene.getWidth());
-            this.mainStage.setMinHeight(mainScene.getHeight());
-            this.mainStage.setMaxHeight(mainScene.getHeight());
+            this.mainStage.setMinWidth(Math.floor(mainScene.getWidth()));
+            this.mainStage.setMaxWidth(Math.floor(mainScene.getWidth()));
+            this.mainStage.setMinHeight(Math.floor(mainScene.getHeight()));
+            this.mainStage.setMaxHeight(Math.floor(mainScene.getHeight()));
         }
     }
 
