@@ -4,6 +4,8 @@ import javafx.scene.input.KeyCode;
 
 public class Keyboard {
 
+    //Fixme: Upper row not usable on Linux
+
     private final boolean[] keyboard;
     private final Chip8 chip8;
 

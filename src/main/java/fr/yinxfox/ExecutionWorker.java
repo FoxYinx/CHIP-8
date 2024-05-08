@@ -10,7 +10,6 @@ public class ExecutionWorker extends Thread {
     private static final int OPPS = 500;
     private static final boolean UNLOCKED = true;
 
-    private static final String PATH = "src/main/resources/roms/";
     private static final int START_ADDRESS = 0x200;
     private static final int FONTSET_SIZE = 80;
     private static final int FONTSET_START_ADDRESS = 0x50;
@@ -63,7 +62,7 @@ public class ExecutionWorker extends Thread {
 
         byte[] data;
         try {
-            data = Files.readAllBytes(Path.of(PATH + filename));
+            data = Files.readAllBytes(Path.of(filename));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -6,18 +6,24 @@ import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.File;
 import java.util.Scanner;
 
 public class Chip8 extends Application {
 
-    private static final int WIDTH = Screen.getWIDTH() * Screen.getScale();
-    private static final int HEIGHT = Screen.getHEIGHT() * Screen.getScale();
+    //Fixme: White line appearing on bottom row
+
     private static final double FPS = 60;
     private static boolean isWindows;
+    private static Hardware hardware = Hardware.NULL;
     private Stage mainStage;
 
     private final Keyboard keyboard;
@@ -45,21 +51,28 @@ public class Chip8 extends Application {
     private void initializeStage() {
         this.video.render();
 
-        this.mainStage.setTitle("CHIP-8");
-        if (isWindows) {
-            this.mainStage.setMinWidth(WIDTH + 16);
-            this.mainStage.setMaxWidth(WIDTH + 16);
-            this.mainStage.setMinHeight(HEIGHT + 39);
-            this.mainStage.setMaxHeight(HEIGHT + 39);
-        } else {
-            this.mainStage.setMinWidth(WIDTH);
-            this.mainStage.setMaxWidth(WIDTH);
-            this.mainStage.setMinHeight(HEIGHT);
-            this.mainStage.setMaxHeight(HEIGHT);
-        }
-        this.mainStage.setResizable(false);
+        MenuBar menuBar = new MenuBar();
+        Menu menuFile = new Menu("File");
+        MenuItem loadRomItem = new MenuItem("Load ROM");
+        loadRomItem.setOnAction(e -> {
+            FileChooser f = new FileChooser();
+            f.setTitle("Open ROM File");
+            File file = f.showOpenDialog(mainStage);
+
+            if (file != null) {
+                loadROM(file.getPath());
+            }
+        });
+        MenuItem exitItem = new MenuItem("Exit");
+        exitItem.setOnAction(e -> System.exit(0));
+
+        menuFile.getItems().add(loadRomItem);
+        menuFile.getItems().add(exitItem);
+
+        menuBar.getMenus().add(menuFile);
 
         VBox root = new VBox();
+        root.getChildren().add(menuBar);
         root.getChildren().add(this.video);
         Scene mainScene = new Scene(root);
 
@@ -77,8 +90,22 @@ public class Chip8 extends Application {
         mainScene.setOnKeyPressed(keyEvent -> this.keyboard.setDown(keyEvent.getCode()));
         mainScene.setOnKeyReleased(keyEvent -> this.keyboard.setUp(keyEvent.getCode()));
 
+        this.mainStage.setResizable(false);
         this.mainStage.setScene(mainScene);
         this.mainStage.show();
+
+        this.mainStage.setTitle(hardware.toString());
+        if (isWindows) {
+            this.mainStage.setMinWidth(mainScene.getWidth() + 16);
+            this.mainStage.setMaxWidth(mainScene.getWidth() + 16);
+            this.mainStage.setMinHeight(mainScene.getHeight() + 39);
+            this.mainStage.setMaxHeight(mainScene.getHeight() + 39);
+        } else {
+            this.mainStage.setMinWidth(mainScene.getWidth());
+            this.mainStage.setMaxWidth(mainScene.getWidth());
+            this.mainStage.setMinHeight(mainScene.getHeight());
+            this.mainStage.setMaxHeight(mainScene.getHeight());
+        }
     }
 
     public static void main(String[] args) {
@@ -87,7 +114,6 @@ public class Chip8 extends Application {
         System.out.println("1 - CHIP-8");
         System.out.println("2 - SUPER CHIP-8");
         System.out.println("3 - XO-CHIP-8");
-        Hardware hardware = Hardware.NULL;
         while (hardware == Hardware.NULL) {
             switch (scanner.nextLine()){
                 case "1" -> hardware = Hardware.CHIP8;
@@ -103,8 +129,6 @@ public class Chip8 extends Application {
         isWindows = System.getProperty("os.name").contains("Windows");
         this.mainStage = stage;
         initializeStage();
-        this.loadROM("games/Rush Hour [Hap, 2006].ch8");
-        //this.loadROM("demos/Trip8 Demo (2008) [Revival Studios].ch8");
     }
 
     public ExecutionWorker getExecutionWorker() {
