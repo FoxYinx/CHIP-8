@@ -3,7 +3,7 @@ package fr.yinxfox;
 public enum Hardware {
     CHIP8("CHIP-8"),
     SCHIP8("SCHIP-8"),
-    XOCHIP8("XO-CHIP-8"),
+    XOCHIP("XO-CHIP"),
     NULL("NULL");
 
     private final String name;

@@ -5,10 +5,10 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -23,7 +23,7 @@ public class Chip8 extends Application {
 
     private static final double FPS = 60;
     private static boolean isWindows;
-    private static Hardware hardware = Hardware.NULL;
+    private static Hardware hardware = Hardware.CHIP8;
     private Stage mainStage;
 
     private final Keyboard keyboard;
@@ -66,10 +66,27 @@ public class Chip8 extends Application {
         MenuItem exitItem = new MenuItem("Exit");
         exitItem.setOnAction(e -> System.exit(0));
 
+        ToggleGroup hardwareGroup = new ToggleGroup();
+        Menu menuHardware = new Menu("Hardware");
+        RadioMenuItem chip8Item = new RadioMenuItem("CHIP-8");
+        chip8Item.setSelected(true);
+        chip8Item.setOnAction(actionEvent -> hardware = Hardware.CHIP8);
+        RadioMenuItem schip8Item = new RadioMenuItem("SCHIP-8");
+        schip8Item.setOnAction(actionEvent -> hardware = Hardware.SCHIP8);
+        RadioMenuItem xochipItem = new RadioMenuItem("XO-CHIP");
+        xochipItem.setOnAction(actionEvent -> hardware = Hardware.XOCHIP);
+        chip8Item.setToggleGroup(hardwareGroup);
+        schip8Item.setToggleGroup(hardwareGroup);
+        xochipItem.setToggleGroup(hardwareGroup);
+
         menuFile.getItems().add(loadRomItem);
         menuFile.getItems().add(exitItem);
+        menuHardware.getItems().add(chip8Item);
+        menuHardware.getItems().add(schip8Item);
+        menuHardware.getItems().add(xochipItem);
 
         menuBar.getMenus().add(menuFile);
+        menuBar.getMenus().add(menuHardware);
 
         VBox root = new VBox();
         root.getChildren().add(menuBar);
@@ -109,18 +126,6 @@ public class Chip8 extends Application {
     }
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Choose which system to launch:");
-        System.out.println("1 - CHIP-8");
-        System.out.println("2 - SUPER CHIP-8");
-        System.out.println("3 - XO-CHIP-8");
-        while (hardware == Hardware.NULL) {
-            switch (scanner.nextLine()){
-                case "1" -> hardware = Hardware.CHIP8;
-                case "2" -> hardware = Hardware.SCHIP8;
-                case "3" -> hardware = Hardware.XOCHIP8;
-            }
-        }
         launch();
     }
 
