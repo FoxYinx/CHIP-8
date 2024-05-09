@@ -90,12 +90,10 @@ public class ExecutionWorker extends Thread {
 
     public void updateTimers() {
         if (this.delayTimer > 0) --this.delayTimer;
-        if (Chip8.getIsWindows()) {
-            if (this.soundTimer > 0) {
-                --this.soundTimer;
-                this.soundMaker.playBuzzer();
-            } else this.soundMaker.stopBuzzer();
-        }
+        if (this.soundTimer > 0) {
+            --this.soundTimer;
+            this.soundMaker.playBuzzer();
+        } else this.soundMaker.stopBuzzer();
     }
 
     public void cycle() throws InterruptedException {

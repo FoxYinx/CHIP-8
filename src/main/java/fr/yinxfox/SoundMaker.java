@@ -7,8 +7,6 @@ import java.nio.file.Paths;
 
 public class SoundMaker {
 
-    //Fixme: le son ne fonctionne pas sous Linux
-
     private static final String URL = "src/main/resources/audio/";
 
     private final MediaPlayer mediaPlayer;

@@ -35,7 +35,7 @@ public class Chip8 extends Application {
         this.keyboard = new Keyboard(this);
         this.video = new Screen();
         this.executionWorker = null;
-        if (isWindows) this.soundMaker = new SoundMaker();
+        this.soundMaker = new SoundMaker();
     }
 
     private void loadROM(String filename) {
