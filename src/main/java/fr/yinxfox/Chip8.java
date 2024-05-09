@@ -16,6 +16,11 @@ import java.io.File;
 
 public class Chip8 extends Application {
 
+    //TODO: Add a debugger
+    //TODO: Add CHIP-8 hires support
+    //TODO: Add SCHIP-8 1.1 support
+    //TODO: Add XO-CHIP support
+
     private static final double FPS = 60;
     private static boolean isWindows;
     private static Hardware hardware = Hardware.CHIP8;
