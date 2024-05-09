@@ -194,6 +194,8 @@ public class ExecutionWorker extends Thread {
                     }
                     case 0x6 -> {
                         int Vx = (opcode & 0x0F00) >> 8;
+                        int Vy = (opcode & 0x00F0) >> 4;
+                        registers[Vx] = registers[Vy];
                         int VfValue = registers[Vx] & 1;
                         registers[Vx] >>>= 1;
                         registers[0xF] = VfValue;
@@ -208,6 +210,8 @@ public class ExecutionWorker extends Thread {
                     }
                     case 0xE -> {
                         int Vx = (opcode & 0x0F00) >> 8;
+                        int Vy = (opcode & 0x00F0) >> 4;
+                        registers[Vx] = registers[Vy];
                         int VfValue = (registers[Vx] & 0x80) >> 7;
                         registers[Vx] <<= 1;
                         registers[Vx] &= 0xFF;
