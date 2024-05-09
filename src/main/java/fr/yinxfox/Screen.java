@@ -40,7 +40,7 @@ public class Screen extends Canvas {
                 } else {
                     graphicsContext.setFill(Color.BLACK);
                 }
-                graphicsContext.fillRect(x*scale, (y*scale), scale, scale);
+                graphicsContext.fillRect(x * scale, y * scale, scale, scale);
             }
         }
     }
@@ -51,10 +51,6 @@ public class Screen extends Canvas {
 
     public static int getHEIGHT() {
         return HEIGHT;
-    }
-
-    public static int getScale() {
-        return scale;
     }
 
     public boolean draw(int xPos, int col, int yPos, int row) {
