@@ -8,7 +8,7 @@ import java.util.Random;
 public class ExecutionWorker extends Thread {
 
     private static final int OPPS = 500;
-    private static final boolean UNLOCKED = true;
+    public static boolean UNLOCKED = true;
 
     private static final int START_ADDRESS = 0x200;
     private static final int FONTSET_SIZE = 80;

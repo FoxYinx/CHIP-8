@@ -93,8 +93,15 @@ public class Chip8 extends Application {
         menuHardware.getItems().add(schip8Item);
         menuHardware.getItems().add(xochipItem);
 
+        Menu menuSpeed = new Menu("Speed");
+        RadioMenuItem unlockedItem = new RadioMenuItem("UNLOCKED");
+        unlockedItem.setSelected(true);
+        unlockedItem.setOnAction(actionEvent -> ExecutionWorker.UNLOCKED = !ExecutionWorker.UNLOCKED);
+        menuSpeed.getItems().add(unlockedItem);
+
         menuBar.getMenus().add(menuFile);
         menuBar.getMenus().add(menuHardware);
+        menuBar.getMenus().add(menuSpeed);
 
         VBox root = new VBox();
         root.getChildren().add(menuBar);
