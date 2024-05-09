@@ -23,7 +23,7 @@ public class Chip8 extends Application {
 
     private final Keyboard keyboard;
     private final Screen video;
-    private SoundMaker soundMaker;
+    private final SoundMaker soundMaker;
     private ExecutionWorker executionWorker;
     private Timeline timeline;
 
@@ -49,7 +49,7 @@ public class Chip8 extends Application {
         MenuBar menuBar = new MenuBar();
         Menu menuFile = new Menu("File");
         MenuItem loadRomItem = new MenuItem("Load ROM");
-        loadRomItem.setOnAction(e -> {
+        loadRomItem.setOnAction(_ -> {
             FileChooser f = new FileChooser();
             f.setTitle("Open ROM File");
             File file = f.showOpenDialog(mainStage);
@@ -59,23 +59,23 @@ public class Chip8 extends Application {
             }
         });
         MenuItem exitItem = new MenuItem("Exit");
-        exitItem.setOnAction(e -> System.exit(0));
+        exitItem.setOnAction(_ -> System.exit(0));
 
         ToggleGroup hardwareGroup = new ToggleGroup();
         Menu menuHardware = new Menu("Hardware");
         RadioMenuItem chip8Item = new RadioMenuItem("CHIP-8");
         chip8Item.setSelected(true);
-        chip8Item.setOnAction(actionEvent -> {
+        chip8Item.setOnAction(_ -> {
             hardware = Hardware.CHIP8;
             this.mainStage.setTitle(hardware.toString());
         });
         RadioMenuItem schip8Item = new RadioMenuItem("SCHIP-8");
-        schip8Item.setOnAction(actionEvent -> {
+        schip8Item.setOnAction(_ -> {
             hardware = Hardware.SCHIP8;
             this.mainStage.setTitle(hardware.toString());
         });
         RadioMenuItem xochipItem = new RadioMenuItem("XO-CHIP");
-        xochipItem.setOnAction(actionEvent -> {
+        xochipItem.setOnAction(_ -> {
             hardware = Hardware.XOCHIP;
             this.mainStage.setTitle(hardware.toString());
         });
@@ -92,7 +92,7 @@ public class Chip8 extends Application {
         Menu menuSpeed = new Menu("Speed");
         RadioMenuItem unlockedItem = new RadioMenuItem("UNLOCKED");
         unlockedItem.setSelected(true);
-        unlockedItem.setOnAction(actionEvent -> ExecutionWorker.UNLOCKED = !ExecutionWorker.UNLOCKED);
+        unlockedItem.setOnAction(_ -> ExecutionWorker.UNLOCKED = !ExecutionWorker.UNLOCKED);
         menuSpeed.getItems().add(unlockedItem);
 
         menuBar.getMenus().add(menuFile);
@@ -106,7 +106,7 @@ public class Chip8 extends Application {
 
         this.timeline = new Timeline(
                 new KeyFrame(Duration.seconds((double) 1 / FPS),
-                        Event -> {
+                        _ -> {
                             if (this.executionWorker != null) {
                                 Platform.runLater(this.video::render);
                                 this.executionWorker.updateTimers();
@@ -149,9 +149,5 @@ public class Chip8 extends Application {
 
     public ExecutionWorker getExecutionWorker() {
         return this.executionWorker;
-    }
-
-    public static boolean getIsWindows() {
-        return isWindows;
     }
 }
