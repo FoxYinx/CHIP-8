@@ -310,12 +310,14 @@ public class ExecutionWorker extends Thread {
                     case 0x55 -> {
                         int Vx = (opcode & 0x0F00) >> 8;
                         System.arraycopy(registers, 0, memory, index, Vx + 1);
+                        index += Vx + 1;
                     }
                     case 0x65 -> {
                         int Vx = (opcode & 0x0F00) >> 8;
                         for (int i = 0; i <= Vx; i++) {
                             registers[i] = memory[index + i] & 0xFF;
                         }
+                        index += Vx + 1;
                     }
                 }
             }
