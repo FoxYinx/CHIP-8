@@ -91,7 +91,6 @@ public class Chip8 extends Application {
 
         Menu menuSpeed = new Menu("Speed");
         RadioMenuItem unlockedItem = new RadioMenuItem("UNLOCKED");
-        unlockedItem.setSelected(true);
         unlockedItem.setOnAction(_ -> ExecutionWorker.UNLOCKED = !ExecutionWorker.UNLOCKED);
         menuSpeed.getItems().add(unlockedItem);
 
