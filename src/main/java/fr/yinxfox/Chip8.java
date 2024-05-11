@@ -75,6 +75,7 @@ public class Chip8 extends Application {
             hardware = Hardware.CHIP8;
             this.mainStage.setTitle(hardware.toString());
             Screen.setHEIGHT(32);
+            Screen.setScale(12);
             this.initializeStage();
         });
         RadioMenuItem chip8HiresItem = new RadioMenuItem("CHIP-8 hires");
@@ -84,6 +85,7 @@ public class Chip8 extends Application {
             hardware = Hardware.CHIP8;
             this.mainStage.setTitle(hardware.toString());
             Screen.setHEIGHT(64);
+            Screen.setScale(10);
             this.initializeStage();
         });
         RadioMenuItem schip8Item = new RadioMenuItem("SCHIP-8");

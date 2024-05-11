@@ -8,7 +8,7 @@ public class Screen extends Canvas {
 
     private static final int WIDTH = 64;
     private static int HEIGHT = 32;
-    private static final int scale = 12;
+    private static int scale = 12;
 
     private final GraphicsContext graphicsContext;
 
@@ -65,5 +65,9 @@ public class Screen extends Canvas {
 
     public static void setHEIGHT(int height) {
         Screen.HEIGHT = height;
+    }
+
+    public static void setScale(int scale) {
+        Screen.scale = scale;
     }
 }
