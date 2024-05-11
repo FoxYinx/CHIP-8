@@ -338,4 +338,24 @@ public class ExecutionWorker extends Thread {
     public int getPc() {
         return pc;
     }
+
+    public int getSp() {
+        return sp;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public int[] getRegisters() {
+        return registers;
+    }
+
+    public int getDelayTimer() {
+        return delayTimer;
+    }
+
+    public int getSoundTimer() {
+        return soundTimer;
+    }
 }
