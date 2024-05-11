@@ -16,6 +16,7 @@ import java.io.File;
 
 public class Chip8 extends Application {
 
+    //TODO: Add tests
     //TODO: Add a debugger
     //TODO: Add CHIP-8 hires support
     //TODO: Add SCHIP-8 1.1 support
@@ -25,16 +26,16 @@ public class Chip8 extends Application {
     private static boolean isWindows;
     private static Hardware hardware = Hardware.CHIP8;
     private Stage mainStage;
+    private MenuBar menuBar = null;
 
     private final Keyboard keyboard;
-    private final Screen video;
+    private Screen video;
     private final SoundMaker soundMaker;
     private ExecutionWorker executionWorker;
     private Timeline timeline;
 
     public Chip8() {
         this.keyboard = new Keyboard(this);
-        this.video = new Screen();
         this.executionWorker = null;
         this.soundMaker = new SoundMaker();
     }
@@ -48,10 +49,8 @@ public class Chip8 extends Application {
         this.timeline.play();
     }
 
-    private void initializeStage() {
-        this.video.render();
-
-        MenuBar menuBar = new MenuBar();
+    private void createMenuBar() {
+        menuBar = new MenuBar();
         Menu menuFile = new Menu("File");
         MenuItem loadRomItem = new MenuItem("Load ROM");
         loadRomItem.setOnAction(_ -> {
@@ -71,8 +70,21 @@ public class Chip8 extends Application {
         RadioMenuItem chip8Item = new RadioMenuItem("CHIP-8");
         chip8Item.setSelected(true);
         chip8Item.setOnAction(_ -> {
+            this.timeline.stop();
+            if (this.executionWorker != null) this.executionWorker.interrupt();
             hardware = Hardware.CHIP8;
             this.mainStage.setTitle(hardware.toString());
+            Screen.setHEIGHT(32);
+            this.initializeStage();
+        });
+        RadioMenuItem chip8HiresItem = new RadioMenuItem("CHIP-8 hires");
+        chip8HiresItem.setOnAction(_ -> {
+            this.timeline.stop();
+            if (this.executionWorker != null) this.executionWorker.interrupt();
+            hardware = Hardware.CHIP8;
+            this.mainStage.setTitle(hardware.toString());
+            Screen.setHEIGHT(64);
+            this.initializeStage();
         });
         RadioMenuItem schip8Item = new RadioMenuItem("SCHIP-8");
         schip8Item.setOnAction(_ -> {
@@ -85,12 +97,14 @@ public class Chip8 extends Application {
             this.mainStage.setTitle(hardware.toString());
         });
         chip8Item.setToggleGroup(hardwareGroup);
+        chip8HiresItem.setToggleGroup(hardwareGroup);
         schip8Item.setToggleGroup(hardwareGroup);
         xochipItem.setToggleGroup(hardwareGroup);
 
         menuFile.getItems().add(loadRomItem);
         menuFile.getItems().add(exitItem);
         menuHardware.getItems().add(chip8Item);
+        menuHardware.getItems().add(chip8HiresItem);
         menuHardware.getItems().add(schip8Item);
         menuHardware.getItems().add(xochipItem);
 
@@ -102,6 +116,13 @@ public class Chip8 extends Application {
         menuBar.getMenus().add(menuFile);
         menuBar.getMenus().add(menuHardware);
         menuBar.getMenus().add(menuSpeed);
+    }
+
+    private void initializeStage() {
+        this.video = new Screen();
+        this.video.render();
+
+        if (menuBar == null) this.createMenuBar();
 
         VBox root = new VBox();
         root.getChildren().add(menuBar);

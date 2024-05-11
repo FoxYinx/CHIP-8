@@ -7,7 +7,7 @@ import javafx.scene.paint.Color;
 public class Screen extends Canvas {
 
     private static final int WIDTH = 64;
-    private static final int HEIGHT = 32;
+    private static int HEIGHT = 32;
     private static final int scale = 12;
 
     private final GraphicsContext graphicsContext;
@@ -53,9 +53,17 @@ public class Screen extends Canvas {
         return HEIGHT;
     }
 
+    public static int getScale() {
+        return scale;
+    }
+
     public boolean draw(int xPos, int col, int yPos, int row) {
         int screenPixel = video[xPos + col][yPos + row];
         this.video[xPos + col][yPos + row] ^= 1;
         return screenPixel == 1;
+    }
+
+    public static void setHEIGHT(int height) {
+        Screen.HEIGHT = height;
     }
 }
