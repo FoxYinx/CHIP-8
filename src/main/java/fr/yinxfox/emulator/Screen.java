@@ -19,8 +19,6 @@ public class Screen extends Canvas {
         setFocusTraversable(true);
 
         this.graphicsContext = this.getGraphicsContext2D();
-        this.graphicsContext.setFill(Color.BLACK);
-        this.graphicsContext.fill();
         clear();
     }
 
