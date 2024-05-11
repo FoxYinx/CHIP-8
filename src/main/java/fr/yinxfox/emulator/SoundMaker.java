@@ -1,4 +1,4 @@
-package fr.yinxfox;
+package fr.yinxfox.emulator;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;

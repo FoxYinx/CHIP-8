@@ -1,4 +1,4 @@
-package fr.yinxfox;
+package fr.yinxfox.emulator;
 
 public enum Hardware {
     CHIP8("CHIP-8"),

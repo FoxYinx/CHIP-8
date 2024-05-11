@@ -1,15 +1,16 @@
-package fr.yinxfox;
+package fr.yinxfox.emulator;
 
+import fr.yinxfox.Launcher;
 import javafx.scene.input.KeyCode;
 
 public class Keyboard {
 
     private final boolean[] keyboard;
-    private final Chip8 chip8;
+    private final Launcher launcher;
 
-    public Keyboard(Chip8 chip8) {
+    public Keyboard(Launcher launcher) {
         this.keyboard = new boolean[16];
-        this.chip8 = chip8;
+        this.launcher = launcher;
     }
 
     public boolean isPressed(int key) {
@@ -20,8 +21,8 @@ public class Keyboard {
         int key = getKey(code.getCode());
         if (key != -1) {
             if (!this.keyboard[key]) {
-                synchronized (this.chip8.getExecutionWorker().getLock()) {
-                    this.chip8.getExecutionWorker().getLock().notify();
+                synchronized (this.launcher.getExecutionWorker().getLock()) {
+                    this.launcher.getExecutionWorker().getLock().notify();
                 }
             }
             this.keyboard[key] = true;
@@ -32,8 +33,8 @@ public class Keyboard {
         int key = getKey(code.getCode());
         if (key != -1) {
             if (this.keyboard[key]) {
-                synchronized (this.chip8.getExecutionWorker().getLock()) {
-                    this.chip8.getExecutionWorker().getLock().notify();
+                synchronized (this.launcher.getExecutionWorker().getLock()) {
+                    this.launcher.getExecutionWorker().getLock().notify();
                 }
             }
             this.keyboard[key] = false;

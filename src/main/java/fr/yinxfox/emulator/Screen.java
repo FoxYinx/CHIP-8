@@ -1,4 +1,4 @@
-package fr.yinxfox;
+package fr.yinxfox.emulator;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;

@@ -1,4 +1,6 @@
-package fr.yinxfox;
+package fr.yinxfox.emulator;
+
+import fr.yinxfox.Launcher;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -53,7 +55,7 @@ public class ExecutionWorker extends Thread {
         this.registers = new int[16];
         this.memory = new int[4096];
         this.index = 0;
-        this.pc = (Chip8.getHardware() == Hardware.CHIP8) ? START_ADDRESS : START_ADDRESS_HIRES;
+        this.pc = (Launcher.getHardware() == Hardware.CHIP8) ? START_ADDRESS : START_ADDRESS_HIRES;
         this.stack = new int[16];
         this.sp = 0;
         this.delayTimer = 0;

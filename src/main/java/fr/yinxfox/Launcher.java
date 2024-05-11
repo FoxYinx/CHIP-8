@@ -1,5 +1,6 @@
 package fr.yinxfox;
 
+import fr.yinxfox.emulator.*;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -14,7 +15,7 @@ import javafx.util.Duration;
 
 import java.io.File;
 
-public class Chip8 extends Application {
+public class Launcher extends Application {
 
     //TODO: Add tests
     //TODO: Add a debugger
@@ -33,7 +34,7 @@ public class Chip8 extends Application {
     private ExecutionWorker executionWorker;
     private Timeline timeline;
 
-    public Chip8() {
+    public Launcher() {
         this.keyboard = new Keyboard(this);
         this.executionWorker = null;
         this.soundMaker = new SoundMaker();

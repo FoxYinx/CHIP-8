@@ -140,7 +140,7 @@
     </dependencies>
 
     <build>
-        <finalName>chip8</finalName>
+        <finalName>launcher</finalName>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -175,7 +175,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>fr.yinxfox.Chip8</mainClass>
+                    <mainClass>fr.yinxfox.Launcher</mainClass>
                     <skip>false</skip>
                 </configuration>
             </plugin>
