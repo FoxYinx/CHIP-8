@@ -23,7 +23,8 @@ public class Launcher extends Application {
     //TODO: Add SCHIP-8 1.1 support
     //TODO: Add XO-CHIP support
 
-    private static Debugger debugger;
+    private static Debugger debugger = null;
+    private static boolean isDebuggerEnabled = false;
 
     private static final double FPS = 60;
     private static boolean isWindows;
@@ -48,6 +49,9 @@ public class Launcher extends Application {
         if (this.executionWorker != null) this.executionWorker.interrupt();
         this.video.clear();
         this.executionWorker = new ExecutionWorker(filename, this.video, this.keyboard, this.soundMaker);
+        if (isDebuggerEnabled) {
+            debugger.setExecutionWorker(executionWorker);
+        }
         System.out.println(filename + " has been loaded!");
         this.timeline.play();
     }
@@ -120,7 +124,7 @@ public class Launcher extends Application {
 
         Menu menuDebug = new Menu("Debug");
         RadioMenuItem enableDebugger = new RadioMenuItem("Debugger");
-        enableDebugger.setOnAction(_ -> debugger = new Debugger());
+        enableDebugger.setOnAction(_ -> toggleDebugger());
         menuDebug.getItems().add(enableDebugger);
 
         menuBar.getMenus().add(menuFile);
@@ -168,6 +172,17 @@ public class Launcher extends Application {
         }
     }
 
+    private void toggleDebugger() {
+        if (isDebuggerEnabled) {
+            isDebuggerEnabled = false;
+            debugger.close();
+            debugger = null;
+        } else {
+            isDebuggerEnabled = true;
+            debugger = (executionWorker != null) ? new Debugger(executionWorker) : new Debugger();
+        }
+    }
+
     public static void main(String[] args) {
         launch();
     }
@@ -185,5 +200,9 @@ public class Launcher extends Application {
 
     public static Hardware getHardware() {
         return hardware;
+    }
+
+    public static double getFPS() {
+        return FPS;
     }
 }

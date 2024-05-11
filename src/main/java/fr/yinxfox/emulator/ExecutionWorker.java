@@ -334,4 +334,8 @@ public class ExecutionWorker extends Thread {
     public Object getLock() {
         return lock;
     }
+
+    public int getPc() {
+        return pc;
+    }
 }
