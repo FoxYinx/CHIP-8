@@ -1,5 +1,6 @@
 package fr.yinxfox;
 
+import fr.yinxfox.debugger.Debugger;
 import fr.yinxfox.emulator.*;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -21,6 +22,8 @@ public class Launcher extends Application {
     //TODO: Add a debugger
     //TODO: Add SCHIP-8 1.1 support
     //TODO: Add XO-CHIP support
+
+    private static Debugger debugger;
 
     private static final double FPS = 60;
     private static boolean isWindows;
@@ -67,7 +70,7 @@ public class Launcher extends Application {
 
         ToggleGroup hardwareGroup = new ToggleGroup();
         Menu menuHardware = new Menu("Hardware");
-        RadioMenuItem chip8Item = new RadioMenuItem("CHIP-8");
+        RadioMenuItem chip8Item = new RadioMenuItem(Hardware.CHIP8.toString());
         chip8Item.setSelected(true);
         chip8Item.setOnAction(_ -> {
             this.timeline.stop();
@@ -78,7 +81,7 @@ public class Launcher extends Application {
             Screen.setScale(12);
             this.initializeStage();
         });
-        RadioMenuItem chip8HiresItem = new RadioMenuItem("CHIP-8 hires");
+        RadioMenuItem chip8HiresItem = new RadioMenuItem(Hardware.CHIP8HIRES.toString());
         chip8HiresItem.setOnAction(_ -> {
             this.timeline.stop();
             if (this.executionWorker != null) this.executionWorker.interrupt();
@@ -88,12 +91,12 @@ public class Launcher extends Application {
             Screen.setScale(10);
             this.initializeStage();
         });
-        RadioMenuItem schip8Item = new RadioMenuItem("SCHIP-8");
+        RadioMenuItem schip8Item = new RadioMenuItem(Hardware.SCHIP8.toString());
         schip8Item.setOnAction(_ -> {
             hardware = Hardware.SCHIP8;
             this.mainStage.setTitle(hardware.toString());
         });
-        RadioMenuItem xochipItem = new RadioMenuItem("XO-CHIP");
+        RadioMenuItem xochipItem = new RadioMenuItem(Hardware.XOCHIP.toString());
         xochipItem.setOnAction(_ -> {
             hardware = Hardware.XOCHIP;
             this.mainStage.setTitle(hardware.toString());
@@ -111,13 +114,19 @@ public class Launcher extends Application {
         menuHardware.getItems().add(xochipItem);
 
         Menu menuSpeed = new Menu("Speed");
-        RadioMenuItem unlockedItem = new RadioMenuItem("UNLOCKED");
+        RadioMenuItem unlockedItem = new RadioMenuItem("Unlocked");
         unlockedItem.setOnAction(_ -> ExecutionWorker.UNLOCKED = !ExecutionWorker.UNLOCKED);
         menuSpeed.getItems().add(unlockedItem);
+
+        Menu menuDebug = new Menu("Debug");
+        RadioMenuItem enableDebugger = new RadioMenuItem("Debugger");
+        enableDebugger.setOnAction(_ -> debugger = new Debugger());
+        menuDebug.getItems().add(enableDebugger);
 
         menuBar.getMenus().add(menuFile);
         menuBar.getMenus().add(menuHardware);
         menuBar.getMenus().add(menuSpeed);
+        menuBar.getMenus().add(menuDebug);
     }
 
     private void initializeStage() {
