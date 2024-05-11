@@ -11,6 +11,7 @@ public class ExecutionWorker extends Thread {
     public static boolean UNLOCKED = false;
 
     private static final int START_ADDRESS = 0x200;
+    private static final int START_ADDRESS_HIRES = 0x2C0;
     private static final int FONTSET_SIZE = 80;
     private static final int FONTSET_START_ADDRESS = 0x50;
     private static final int[] FONTSET = new int[]{
@@ -52,7 +53,7 @@ public class ExecutionWorker extends Thread {
         this.registers = new int[16];
         this.memory = new int[4096];
         this.index = 0;
-        this.pc = START_ADDRESS;
+        this.pc = (Chip8.getHardware() == Hardware.CHIP8) ? START_ADDRESS : START_ADDRESS_HIRES;
         this.stack = new int[16];
         this.sp = 0;
         this.delayTimer = 0;
@@ -110,10 +111,10 @@ public class ExecutionWorker extends Thread {
     }
 
     private void execute() throws InterruptedException {
-        //System.out.println("Read opcode: " + String.format("0x%04X", opcode));
+        // System.out.println("Read opcode: " + String.format("0x%04X", opcode));
         switch (opcode >> 12) {
             case 0x0 -> {
-                if (opcode == 0x00E0) video.clear();
+                if (opcode == 0x00E0 || opcode == 0x0230) video.clear();
                 else {
                     sp--;
                     pc = stack[sp];

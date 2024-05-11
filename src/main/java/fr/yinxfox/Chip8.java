@@ -18,7 +18,7 @@ public class Chip8 extends Application {
 
     //TODO: Add tests
     //TODO: Add a debugger
-    //TODO: Add CHIP-8 hires support
+    //fixme: Bottom four rows are missing in CHIP-8 hires mode
     //TODO: Add SCHIP-8 1.1 support
     //TODO: Add XO-CHIP support
 
@@ -82,7 +82,7 @@ public class Chip8 extends Application {
         chip8HiresItem.setOnAction(_ -> {
             this.timeline.stop();
             if (this.executionWorker != null) this.executionWorker.interrupt();
-            hardware = Hardware.CHIP8;
+            hardware = Hardware.CHIP8HIRES;
             this.mainStage.setTitle(hardware.toString());
             Screen.setHEIGHT(64);
             Screen.setScale(10);
@@ -176,5 +176,9 @@ public class Chip8 extends Application {
 
     public ExecutionWorker getExecutionWorker() {
         return this.executionWorker;
+    }
+
+    public static Hardware getHardware() {
+        return hardware;
     }
 }
