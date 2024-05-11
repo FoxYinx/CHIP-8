@@ -18,7 +18,6 @@ public class Chip8 extends Application {
 
     //TODO: Add tests
     //TODO: Add a debugger
-    //fixme: Bottom four rows are missing in CHIP-8 hires mode
     //TODO: Add SCHIP-8 1.1 support
     //TODO: Add XO-CHIP support
 
@@ -148,18 +147,14 @@ public class Chip8 extends Application {
         this.mainStage.setResizable(false);
         this.mainStage.setScene(mainScene);
         this.mainStage.show();
-
         this.mainStage.setTitle(hardware.toString());
+
         if (isWindows) {
-            this.mainStage.setMinWidth(mainScene.getWidth() + 16);
+            //fixme: probably doesn't work
             this.mainStage.setMaxWidth(mainScene.getWidth() + 16);
-            this.mainStage.setMinHeight(mainScene.getHeight() + 39);
+            this.mainStage.setMinWidth(mainScene.getWidth() + 16);
             this.mainStage.setMaxHeight(mainScene.getHeight() + 39);
-        } else {
-            this.mainStage.setMinWidth(mainScene.getWidth());
-            this.mainStage.setMaxWidth(mainScene.getWidth());
-            this.mainStage.setMinHeight(mainScene.getHeight());
-            this.mainStage.setMaxHeight(mainScene.getHeight());
+            this.mainStage.setMinHeight(mainScene.getHeight() + 39);
         }
     }
 
