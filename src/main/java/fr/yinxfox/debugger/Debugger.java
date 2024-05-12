@@ -5,9 +5,10 @@ import fr.yinxfox.emulator.ExecutionWorker;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -21,19 +22,19 @@ public class Debugger extends Thread {
     private final static int HEIGHT = 600;
 
     private final static Font LIBE = new Font("Liberation Mono", 18);
-    private final ArrayList<Label> labels = new ArrayList<>();
+    private final ArrayList<Label> registers = new ArrayList<>();
     private static final double FPS = Launcher.getFPS();
 
     private Stage mainStage;
     private Scene mainScene;
-    private VBox root;
+    private GridPane grid;
     private ExecutionWorker executionWorker;
     private Timeline timeline;
 
     public Debugger() {
         this.executionWorker = null;
-        this.root = new VBox();
-        this.mainScene = new Scene(this.root, WIDTH, HEIGHT);
+        this.grid = new GridPane();
+        this.mainScene = new Scene(this.grid, WIDTH, HEIGHT);
         this.mainScene.setFill(Color.RED);
         this.mainStage = new Stage();
 
@@ -43,8 +44,8 @@ public class Debugger extends Thread {
 
     public Debugger(ExecutionWorker executionWorker) {
         this.executionWorker = executionWorker;
-        this.root = new VBox();
-        this.mainScene = new Scene(this.root, WIDTH, HEIGHT);
+        this.grid = new GridPane();
+        this.mainScene = new Scene(this.grid, WIDTH, HEIGHT);
         this.mainScene.setFill(Color.RED);
         this.mainStage = new Stage();
 
@@ -53,13 +54,17 @@ public class Debugger extends Thread {
     }
 
     public void setupDisplay() {
+        //grid.setPadding(new Insets(0, 5, 0, 5));
+        grid.setHgap(5);
+        grid.setAlignment(Pos.CENTER);
+
         this.mainStage.setResizable(false);
         this.mainStage.setTitle("Debugger");
         this.mainStage.setScene(this.mainScene);
 
         this.timeline = new Timeline(
                 new KeyFrame(Duration.seconds((double) 1 / FPS),
-                        _ -> this.updateLabels())
+                        _ -> this.updateRegisters())
         );
         this.timeline.setCycleCount(Animation.INDEFINITE);
 
@@ -68,54 +73,54 @@ public class Debugger extends Thread {
         this.mainStage.show();
     }
 
-    private void updateLabels() {
+    private void updateRegisters() {
         if (executionWorker != null) {
-            for (int i = 0; i < labels.size(); i++) {
-                if (labels.get(i).getText().startsWith("PC")) {
+            for (int i = 0; i < registers.size(); i++) {
+                if (registers.get(i).getText().startsWith("PC")) {
                     int pc = executionWorker.getPc();
-                    labels.get(i).setText("PC " + String.format("0x%04X", pc));
-                } else if (labels.get(i).getText().startsWith("I")) {
+                    registers.get(i).setText("PC " + String.format("0x%04X", pc));
+                } else if (registers.get(i).getText().startsWith("I")) {
                     int index = executionWorker.getIndex();
-                    labels.get(i).setText("I   " + String.format("0x%03X", index));
-                } else if (labels.get(i).getText().startsWith("v")) {
+                    registers.get(i).setText("I   " + String.format("0x%03X", index));
+                } else if (registers.get(i).getText().startsWith("v")) {
                     for (int j = 0; j < 16; j++) {
-                        labels.get(i + j).setText("v" + String.format("%01X", j) + " " + String.format("0x%04X", executionWorker.getRegisters()[j]));
+                        registers.get(i + j).setText("v" + String.format("%01X", j) + " " + String.format("0x%04X", executionWorker.getRegisters()[j]));
                     }
                     i += 15;
-                } else if (labels.get(i).getText().startsWith("DT")) {
+                } else if (registers.get(i).getText().startsWith("DT")) {
                     int delayTimer = executionWorker.getDelayTimer();
-                    labels.get(i).setText("DT     " + String.format("%02d", delayTimer));
-                } else if (labels.get(i).getText().startsWith("ST")) {
+                    registers.get(i).setText("DT     " + String.format("%02d", delayTimer));
+                } else if (registers.get(i).getText().startsWith("ST")) {
                     int soundTimer = executionWorker.getSoundTimer();
-                    labels.get(i).setText("ST     " + String.format("%02d", soundTimer));
+                    registers.get(i).setText("ST     " + String.format("%02d", soundTimer));
                 }
             }
         }
     }
 
     public void setupRegisters() {
-        createLabel("REGISTERS");
-        createLabel("Reg Value");
-        createLabel("---------");
-        createLabel("PC 0x0000");
-        createLabel("         ");
-        createLabel("I   0x000");
+        createRegister("REGISTERS");
+        createRegister("Reg Value");
+        createRegister("---------");
+        createRegister("PC 0x0000");
+        createRegister("         ");
+        createRegister("I   0x000");
         for (int i = 0; i < 16; i++) {
-            createLabel("v" + String.format("%01X", i) + " 0x0000");
+            createRegister("v" + String.format("%01X", i) + " 0x0000");
         }
-        createLabel("         ");
-        createLabel("DT     00");
-        createLabel("ST     00");
+        createRegister("         ");
+        createRegister("DT     00");
+        createRegister("ST     00");
 
-        for (Label label:labels) {
-            label.setFont(LIBE);
-            this.root.getChildren().add(label);
+        for (int i = 0; i < registers.size(); i++) {
+            registers.get(i).setFont(LIBE);
+            this.grid.add(registers.get(i), 0, i);
         }
     }
 
-    private void createLabel(String name) {
+    private void createRegister(String name) {
         Label label = new Label(name);
-        labels.add(label);
+        registers.add(label);
     }
 
     @Override
