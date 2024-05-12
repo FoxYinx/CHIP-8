@@ -72,6 +72,7 @@ public class Debugger extends Thread {
         this.mainStage.setResizable(false);
         this.mainStage.setTitle("Debugger");
         this.mainStage.setScene(this.mainScene);
+        this.mainStage.setOnCloseRequest(_ -> Launcher.closeDebugger());
 
         this.timeline = new Timeline(
                 new KeyFrame(Duration.seconds((double) 1 / FPS),

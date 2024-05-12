@@ -31,7 +31,7 @@ public class Launcher extends Application {
     private static final double FPS = 60;
     private static Hardware hardware = Hardware.CHIP8;
     private Stage mainStage;
-    private MenuBar menuBar = null;
+    private static MenuBar menuBar = null;
 
     private final Keyboard keyboard;
     private Screen video;
@@ -174,6 +174,13 @@ public class Launcher extends Application {
             isDebuggerEnabled = true;
             debugger = (executionWorker != null) ? new Debugger(executionWorker) : new Debugger();
         }
+    }
+
+    public static void closeDebugger() {
+        isDebuggerEnabled = false;
+        debugger.close();
+        debugger = null;
+        ((RadioMenuItem) menuBar.getMenus().filtered(menu -> menu.getText().equals("Debug")).getFirst().getItems().getFirst()).setSelected(false);
     }
 
     public static void main(String[] args) {
