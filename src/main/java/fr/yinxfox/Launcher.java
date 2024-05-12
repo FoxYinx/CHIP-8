@@ -19,7 +19,7 @@ import java.io.File;
 public class Launcher extends Application {
 
     //TODO: Add tests
-    //TODO: Add a debugger
+    //TODO: Improve debugger
     //TODO: Add SCHIP-8 1.1 support
     //TODO: Add XO-CHIP support
 
