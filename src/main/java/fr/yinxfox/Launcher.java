@@ -23,8 +23,6 @@ public class Launcher extends Application {
     //TODO: Add SCHIP-8 1.1 support
     //TODO: Add XO-CHIP support
 
-    //fixme: cross button should exit program
-
     private static Debugger debugger = null;
     private static boolean isDebuggerEnabled = false;
 

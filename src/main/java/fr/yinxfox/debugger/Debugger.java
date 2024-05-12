@@ -63,7 +63,7 @@ public class Debugger extends Thread {
         this.start();
     }
 
-    public void setupDisplay() {
+    private void setupDisplay() {
         AnchorPane.setTopAnchor(grid, 0.0);
         AnchorPane.setBottomAnchor(grid, 0.0);
         AnchorPane.setLeftAnchor(grid, 0.0);
@@ -76,7 +76,10 @@ public class Debugger extends Thread {
 
         this.timeline = new Timeline(
                 new KeyFrame(Duration.seconds((double) 1 / FPS),
-                        _ -> this.updateRegisters())
+                        _ -> {
+                    this.updateRegisters();
+                    this.updateStack();
+                })
         );
         this.timeline.setCycleCount(Animation.INDEFINITE);
 
@@ -112,7 +115,22 @@ public class Debugger extends Thread {
         }
     }
 
-    public void setupRegisters() {
+    private void updateStack() {
+        if (executionWorker != null) {
+            for (int i = 0; i < stack.size(); i++) {
+                if (stack.get(i).getText().startsWith("SP")) {
+                    stack.get(i).setText("SP     " + String.format("%02d", executionWorker.getSp()));
+                } else if (stack.get(i).getText().startsWith("00")) {
+                    for (int j = 0; j < 12; j++) {
+                        stack.get(i + j).setText(String.format("%02d", j) + "  " + String.format("0x%03X", executionWorker.getStack()[j]));
+                    }
+                    i += 11;
+                }
+            }
+        }
+    }
+
+    private void setupRegisters() {
         createLabel("REGISTERS", registers);
         createLabel("Reg Value", registers);
         createLabel("---------", registers);
@@ -133,7 +151,7 @@ public class Debugger extends Thread {
 
     //Fixme: la taille du stack change avec le CHIP choisit
 
-    public void setupStack() {
+    private void setupStack() {
         createLabel("STACK", stack);
         createLabel("Lv Value", stack);
         createLabel("---------", stack);
@@ -148,7 +166,7 @@ public class Debugger extends Thread {
         }
     }
 
-    public void setupMemory() {
+    private void setupMemory() {
         createLabel("MEMORY", memory);
 
         for (int i = 0; i < memory.size(); i++) {

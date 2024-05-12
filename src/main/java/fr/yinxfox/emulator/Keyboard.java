@@ -43,10 +43,10 @@ public class Keyboard {
 
     private int getKey(int code) {
         return switch (code) {
-            case 150 -> 1;
-            case 0, 38, 104 -> 2;
-            case 152 -> 3;
-            case 222 -> 12;
+            case 150, 49 -> 1;
+            case 0, 38, 104, 50 -> 2;
+            case 152, 51 -> 3;
+            case 222, 52 -> 12;
             case 65, 37, 100 -> 4;
             case 90 -> 5;
             case 69, 39, 102 -> 6;
