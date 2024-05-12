@@ -29,7 +29,6 @@ public class Launcher extends Application {
     private static boolean isDebuggerEnabled = false;
 
     private static final double FPS = 60;
-    private static boolean isWindows;
     private static Hardware hardware = Hardware.CHIP8;
     private Stage mainStage;
     private MenuBar menuBar = null;
@@ -183,7 +182,6 @@ public class Launcher extends Application {
 
     @Override
     public void start(Stage stage) {
-        isWindows = System.getProperty("os.name").contains("Windows");
         this.mainStage = stage;
         initializeStage();
     }
