@@ -165,13 +165,13 @@ public class Launcher extends Application {
         this.mainStage.show();
         this.mainStage.setTitle(hardware.toString());
 
-        if (isWindows) {
+        /*if (isWindows) {
             //fixme: probably doesn't work
             this.mainStage.setMaxWidth(mainScene.getWidth() + 16);
             this.mainStage.setMinWidth(mainScene.getWidth() + 16);
             this.mainStage.setMaxHeight(mainScene.getHeight() + 39);
             this.mainStage.setMinHeight(mainScene.getHeight() + 39);
-        }
+        }*/
     }
 
     private void toggleDebugger() {
