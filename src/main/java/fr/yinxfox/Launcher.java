@@ -186,6 +186,11 @@ public class Launcher extends Application {
         initializeStage();
     }
 
+    @Override
+    public void stop() {
+        System.exit(0);
+    }
+
     public ExecutionWorker getExecutionWorker() {
         return this.executionWorker;
     }
