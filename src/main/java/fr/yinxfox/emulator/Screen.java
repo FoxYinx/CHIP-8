@@ -31,8 +31,8 @@ public class Screen extends Canvas {
     }
 
     public void render() {
-        for(int x = 0; x < WIDTH; x++) {
-            for(int y = 0; y < HEIGHT; y++) {
+        for (int x = 0; x < WIDTH; x++) {
+            for (int y = 0; y < HEIGHT; y++) {
                 if (this.video[x][y] == 1) {
                     graphicsContext.setFill(Color.WHITE);
                 } else {
