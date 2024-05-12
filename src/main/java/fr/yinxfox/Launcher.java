@@ -19,7 +19,6 @@ import java.io.File;
 public class Launcher extends Application {
 
     //TODO: Add tests
-    //TODO: Improve debugger
     //TODO: Add SCHIP-8 1.1 support
     //TODO: Add XO-CHIP support
 
@@ -83,6 +82,7 @@ public class Launcher extends Application {
             Screen.setHEIGHT(32);
             Screen.setScale(12);
             this.initializeStage();
+            if (debugger != null) debugger.updatePc();
         });
         RadioMenuItem chip8HiresItem = new RadioMenuItem(Hardware.CHIP8HIRES.toString());
         chip8HiresItem.setOnAction(_ -> {
@@ -93,6 +93,7 @@ public class Launcher extends Application {
             Screen.setHEIGHT(64);
             Screen.setScale(10);
             this.initializeStage();
+            if (debugger != null) debugger.updatePc();
         });
         RadioMenuItem schip8Item = new RadioMenuItem(Hardware.SCHIP8.toString());
         schip8Item.setOnAction(_ -> {

@@ -362,4 +362,16 @@ public class ExecutionWorker extends Thread {
     public int getSoundTimer() {
         return soundTimer;
     }
+
+    public static int getStartAddress() {
+        return START_ADDRESS;
+    }
+
+    public static int getStartAddressHires() {
+        return START_ADDRESS_HIRES;
+    }
+
+    public int[] getMemory() {
+        return memory;
+    }
 }

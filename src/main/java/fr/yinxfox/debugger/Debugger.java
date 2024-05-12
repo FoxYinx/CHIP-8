@@ -2,11 +2,11 @@ package fr.yinxfox.debugger;
 
 import fr.yinxfox.Launcher;
 import fr.yinxfox.emulator.ExecutionWorker;
+import fr.yinxfox.emulator.Hardware;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.HPos;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
@@ -19,7 +19,11 @@ import javafx.util.Duration;
 
 import java.util.ArrayList;
 
+
 public class Debugger extends Thread {
+
+    //TODO: Add opcode decoder
+    //TODO: Add ways to change execution speed / pause it
 
     private final static int WIDTH = 450;
     private final static int HEIGHT = 600;
@@ -29,6 +33,7 @@ public class Debugger extends Thread {
     private final ArrayList<Label> stack = new ArrayList<>();
     private final ArrayList<Label> memory = new ArrayList<>();
     private static final double FPS = Launcher.getFPS();
+    private static int initialPc;
 
     private Stage mainStage;
     private Scene mainScene;
@@ -77,8 +82,11 @@ public class Debugger extends Thread {
         this.timeline = new Timeline(
                 new KeyFrame(Duration.seconds((double) 1 / FPS),
                         _ -> {
-                    this.updateRegisters();
-                    this.updateStack();
+                    if (executionWorker != null) {
+                        this.updateRegisters();
+                        this.updateStack();
+                        this.updateMemory();
+                    }
                 })
         );
         this.timeline.setCycleCount(Animation.INDEFINITE);
@@ -91,42 +99,47 @@ public class Debugger extends Thread {
     }
 
     private void updateRegisters() {
-        if (executionWorker != null) {
-            for (int i = 0; i < registers.size(); i++) {
-                if (registers.get(i).getText().startsWith("PC")) {
-                    int pc = executionWorker.getPc();
-                    registers.get(i).setText("PC " + String.format("0x%04X", pc));
-                } else if (registers.get(i).getText().startsWith("I")) {
-                    int index = executionWorker.getIndex();
-                    registers.get(i).setText("I   " + String.format("0x%03X", index));
-                } else if (registers.get(i).getText().startsWith("v")) {
-                    for (int j = 0; j < 16; j++) {
-                        registers.get(i + j).setText("v" + String.format("%01X", j) + " " + String.format("0x%04X", executionWorker.getRegisters()[j]));
-                    }
-                    i += 15;
-                } else if (registers.get(i).getText().startsWith("DT")) {
-                    int delayTimer = executionWorker.getDelayTimer();
-                    registers.get(i).setText("DT     " + String.format("%02d", delayTimer));
-                } else if (registers.get(i).getText().startsWith("ST")) {
-                    int soundTimer = executionWorker.getSoundTimer();
-                    registers.get(i).setText("ST     " + String.format("%02d", soundTimer));
+        for (int i = 0; i < registers.size(); i++) {
+            if (registers.get(i).getText().startsWith("PC")) {
+                int pc = executionWorker.getPc();
+                registers.get(i).setText("PC " + String.format("0x%04X", pc));
+            } else if (registers.get(i).getText().startsWith("I")) {
+                int index = executionWorker.getIndex();
+                registers.get(i).setText("I   " + String.format("0x%03X", index));
+            } else if (registers.get(i).getText().startsWith("v")) {
+                for (int j = 0; j < 16; j++) {
+                    registers.get(i + j).setText("v" + String.format("%01X", j) + " " + String.format("0x%04X", executionWorker.getRegisters()[j]));
                 }
+                i += 15;
+            } else if (registers.get(i).getText().startsWith("DT")) {
+                int delayTimer = executionWorker.getDelayTimer();
+                registers.get(i).setText("DT     " + String.format("%02d", delayTimer));
+            } else if (registers.get(i).getText().startsWith("ST")) {
+                int soundTimer = executionWorker.getSoundTimer();
+                registers.get(i).setText("ST     " + String.format("%02d", soundTimer));
             }
         }
     }
 
     private void updateStack() {
-        if (executionWorker != null) {
-            for (int i = 0; i < stack.size(); i++) {
-                if (stack.get(i).getText().startsWith("SP")) {
-                    stack.get(i).setText("SP     " + String.format("%02d", executionWorker.getSp()));
-                } else if (stack.get(i).getText().startsWith("00")) {
-                    for (int j = 0; j < 12; j++) {
-                        stack.get(i + j).setText(String.format("%02d", j) + "  " + String.format("0x%03X", executionWorker.getStack()[j]));
-                    }
-                    i += 11;
+        for (int i = 0; i < stack.size(); i++) {
+            if (stack.get(i).getText().startsWith("SP")) {
+                stack.get(i).setText("SP     " + String.format("%02d", executionWorker.getSp()));
+            } else if (stack.get(i).getText().startsWith("00")) {
+                for (int j = 0; j < 12; j++) {
+                    stack.get(i + j).setText(String.format("%02d", j) + "  " + String.format("0x%03X", executionWorker.getStack()[j]));
                 }
+                i += 11;
             }
+        }
+    }
+
+    private void updateMemory() {
+        int pc = executionWorker.getPc();
+        int j = 3;
+        for (int i = pc - 18; i <= pc + 18; i += 2) {
+            memory.get(j).setText(String.format("%04X", i) + " " + String.format("%04X", executionWorker.getMemory()[i]));
+            j++;
         }
     }
 
@@ -146,6 +159,17 @@ public class Debugger extends Thread {
 
         for (int i = 0; i < registers.size(); i++) {
             this.grid.add(registers.get(i), 0, i);
+        }
+
+        this.updatePc();
+    }
+
+    public void updatePc() {
+        initialPc = (Launcher.getHardware() == Hardware.CHIP8) ? ExecutionWorker.getStartAddress() : ExecutionWorker.getStartAddressHires();
+        for (Label register : registers) {
+            if (register.getText().startsWith("PC")) {
+                register.setText("PC " + String.format("0x%04X", initialPc));
+            }
         }
     }
 
@@ -168,6 +192,11 @@ public class Debugger extends Thread {
 
     private void setupMemory() {
         createLabel("MEMORY", memory);
+        createLabel("Adr Value", memory);
+        createLabel("---------", memory);
+        for (int i = initialPc - 18; i <= initialPc + 18; i += 2) {
+            createLabel(String.format("%04X", i) + " 0000", memory);
+        }
 
         for (int i = 0; i < memory.size(); i++) {
             this.grid.add(memory.get(i), 2, i);
