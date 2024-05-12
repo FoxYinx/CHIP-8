@@ -56,7 +56,7 @@ public class ExecutionWorker extends Thread {
         this.memory = new int[4096];
         this.index = 0;
         this.pc = (Launcher.getHardware() == Hardware.CHIP8) ? START_ADDRESS : START_ADDRESS_HIRES;
-        this.stack = new int[16];
+        this.stack = new int[12];
         this.sp = 0;
         this.delayTimer = 0;
         this.soundTimer = 0;
