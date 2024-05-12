@@ -5,10 +5,13 @@ import fr.yinxfox.emulator.ExecutionWorker;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -23,10 +26,13 @@ public class Debugger extends Thread {
 
     private final static Font LIBE = new Font("Liberation Mono", 18);
     private final ArrayList<Label> registers = new ArrayList<>();
+    private final ArrayList<Label> stack = new ArrayList<>();
+    private final ArrayList<Label> memory = new ArrayList<>();
     private static final double FPS = Launcher.getFPS();
 
     private Stage mainStage;
     private Scene mainScene;
+    private AnchorPane anchor;
     private GridPane grid;
     private ExecutionWorker executionWorker;
     private Timeline timeline;
@@ -34,7 +40,9 @@ public class Debugger extends Thread {
     public Debugger() {
         this.executionWorker = null;
         this.grid = new GridPane();
-        this.mainScene = new Scene(this.grid, WIDTH, HEIGHT);
+        this.anchor = new AnchorPane();
+        this.anchor.getChildren().add(grid);
+        this.mainScene = new Scene(this.anchor, WIDTH, HEIGHT);
         this.mainScene.setFill(Color.RED);
         this.mainStage = new Stage();
 
@@ -45,7 +53,9 @@ public class Debugger extends Thread {
     public Debugger(ExecutionWorker executionWorker) {
         this.executionWorker = executionWorker;
         this.grid = new GridPane();
-        this.mainScene = new Scene(this.grid, WIDTH, HEIGHT);
+        this.anchor = new AnchorPane();
+        this.anchor.getChildren().add(grid);
+        this.mainScene = new Scene(this.anchor, WIDTH, HEIGHT);
         this.mainScene.setFill(Color.RED);
         this.mainStage = new Stage();
 
@@ -54,9 +64,10 @@ public class Debugger extends Thread {
     }
 
     public void setupDisplay() {
-        //grid.setPadding(new Insets(0, 5, 0, 5));
-        grid.setHgap(5);
-        grid.setAlignment(Pos.CENTER);
+        AnchorPane.setTopAnchor(grid, 0.0);
+        AnchorPane.setBottomAnchor(grid, 0.0);
+        AnchorPane.setLeftAnchor(grid, 0.0);
+        AnchorPane.setRightAnchor(grid, 0.0);
 
         this.mainStage.setResizable(false);
         this.mainStage.setTitle("Debugger");
@@ -69,6 +80,8 @@ public class Debugger extends Thread {
         this.timeline.setCycleCount(Animation.INDEFINITE);
 
         this.setupRegisters();
+        this.setupStack();
+        this.setupMemory();
 
         this.mainStage.show();
     }
@@ -99,28 +112,46 @@ public class Debugger extends Thread {
     }
 
     public void setupRegisters() {
-        createRegister("REGISTERS");
-        createRegister("Reg Value");
-        createRegister("---------");
-        createRegister("PC 0x0000");
-        createRegister("         ");
-        createRegister("I   0x000");
+        createLabel("REGISTERS", registers);
+        createLabel("Reg Value", registers);
+        createLabel("---------", registers);
+        createLabel("PC 0x0000", registers);
+        createLabel("         ", registers);
+        createLabel("I   0x000", registers);
         for (int i = 0; i < 16; i++) {
-            createRegister("v" + String.format("%01X", i) + " 0x0000");
+            createLabel("v" + String.format("%01X", i) + " 0x0000", registers);
         }
-        createRegister("         ");
-        createRegister("DT     00");
-        createRegister("ST     00");
+        createLabel("         ", registers);
+        createLabel("DT     00", registers);
+        createLabel("ST     00", registers);
 
         for (int i = 0; i < registers.size(); i++) {
-            registers.get(i).setFont(LIBE);
             this.grid.add(registers.get(i), 0, i);
         }
     }
 
-    private void createRegister(String name) {
+    public void setupStack() {
+        createLabel("STACK", stack);
+
+        for (int i = 0; i < stack.size(); i++) {
+            this.grid.add(stack.get(i), 1, i);
+        }
+    }
+
+    public void setupMemory() {
+        createLabel("MEMORY", memory);
+
+        for (int i = 0; i < memory.size(); i++) {
+            this.grid.add(memory.get(i), 2, i);
+        }
+    }
+
+    private void createLabel(String name, ArrayList<Label> liste) {
         Label label = new Label(name);
-        registers.add(label);
+        label.setFont(LIBE);
+        GridPane.setHalignment(label, HPos.CENTER);
+        GridPane.setHgrow(label, Priority.ALWAYS);
+        liste.add(label);
     }
 
     @Override
