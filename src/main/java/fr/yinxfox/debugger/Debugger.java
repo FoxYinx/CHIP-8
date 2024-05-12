@@ -130,8 +130,17 @@ public class Debugger extends Thread {
         }
     }
 
+    //Fixme: la taille du stack change avec le CHIP choisit
+
     public void setupStack() {
         createLabel("STACK", stack);
+        createLabel("Lv Value", stack);
+        createLabel("---------", stack);
+        createLabel("SP     00", stack);
+        createLabel("         ", stack);
+        for (int i = 0; i < 12; i++) {
+            createLabel(String.format("%02d", i) + "  0x000", stack);
+        }
 
         for (int i = 0; i < stack.size(); i++) {
             this.grid.add(stack.get(i), 1, i);

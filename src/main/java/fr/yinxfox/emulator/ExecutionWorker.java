@@ -343,6 +343,10 @@ public class ExecutionWorker extends Thread {
         return sp;
     }
 
+    public int[] getStack() {
+        return stack;
+    }
+
     public int getIndex() {
         return index;
     }
