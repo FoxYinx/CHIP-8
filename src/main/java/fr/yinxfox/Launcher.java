@@ -19,6 +19,7 @@ import java.io.File;
 public class Launcher extends Application {
 
     //TODO: Add tests
+    //TODO: Remove Hardware menu and link the hardware selection to the rom
     //TODO: Add SCHIP-8 1.1 support
     //TODO: Add XO-CHIP support
 
@@ -35,6 +36,7 @@ public class Launcher extends Application {
     private final SoundMaker soundMaker;
     private ExecutionWorker executionWorker;
     private Timeline timeline;
+    private String filePath;
 
     public Launcher() {
         this.keyboard = new Keyboard(this);
@@ -42,15 +44,25 @@ public class Launcher extends Application {
         this.soundMaker = new SoundMaker();
     }
 
-    private void loadROM(String filename) {
+    private void restartEmulator(String filePath) {
         this.timeline.stop();
         if (this.executionWorker != null) this.executionWorker.interrupt();
         this.video.clear();
-        this.executionWorker = new ExecutionWorker(filename, this.video, this.keyboard, this.soundMaker);
+        this.executionWorker = new ExecutionWorker(filePath, this.video, this.keyboard, this.soundMaker);
         if (isDebuggerEnabled) {
             debugger.setExecutionWorker(executionWorker);
         }
-        System.out.println(filename + " has been loaded!");
+    }
+
+    private void loadROM(String filePath) {
+        restartEmulator(filePath);
+        System.out.println(filePath + " has been loaded!");
+        this.timeline.play();
+    }
+
+    private void restart() {
+        restartEmulator(filePath);
+        System.out.println(filePath + " has been reloaded!");
         this.timeline.play();
     }
 
@@ -64,11 +76,18 @@ public class Launcher extends Application {
             File file = f.showOpenDialog(mainStage);
 
             if (file != null) {
-                loadROM(file.getPath());
+                filePath = file.getPath();
+                loadROM(filePath);
             }
         });
+        MenuItem restartItem = new MenuItem("Restart");
+        restartItem.setOnAction(_ -> restart());
         MenuItem exitItem = new MenuItem("Exit");
         exitItem.setOnAction(_ -> System.exit(0));
+
+        menuFile.getItems().add(loadRomItem);
+        menuFile.getItems().add(restartItem);
+        menuFile.getItems().add(exitItem);
 
         ToggleGroup hardwareGroup = new ToggleGroup();
         Menu menuHardware = new Menu("Hardware");
@@ -110,8 +129,6 @@ public class Launcher extends Application {
         schip8Item.setToggleGroup(hardwareGroup);
         xochipItem.setToggleGroup(hardwareGroup);
 
-        menuFile.getItems().add(loadRomItem);
-        menuFile.getItems().add(exitItem);
         menuHardware.getItems().add(chip8Item);
         menuHardware.getItems().add(chip8HiresItem);
         menuHardware.getItems().add(schip8Item);

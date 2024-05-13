@@ -35,10 +35,10 @@ public class Debugger extends Thread {
     private static final double FPS = Launcher.getFPS();
     private static int initialPc;
 
-    private Stage mainStage;
-    private Scene mainScene;
-    private AnchorPane anchor;
-    private GridPane grid;
+    private final Stage mainStage;
+    private final Scene mainScene;
+    private final AnchorPane anchor;
+    private final GridPane grid;
     private ExecutionWorker executionWorker;
     private Timeline timeline;
 
@@ -138,7 +138,7 @@ public class Debugger extends Thread {
         int pc = executionWorker.getPc();
         int j = 3;
         for (int i = pc - 18; i <= pc + 18; i += 2) {
-            memory.get(j).setText(String.format("%04X", i) + " " + String.format("%04X", executionWorker.getMemory()[i]));
+            memory.get(j).setText(String.format("%04X", i) + " " + String.format("%04X", (executionWorker.getMemory()[i] << 8) | executionWorker.getMemory()[i + 1]));
             j++;
         }
     }
