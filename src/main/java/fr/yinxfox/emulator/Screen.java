@@ -1,21 +1,23 @@
 package fr.yinxfox.emulator;
 
+import fr.yinxfox.Launcher;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public class Screen extends Canvas {
 
-    private static final int WIDTH = 64;
+    private static int WIDTH = 64;
     private static int HEIGHT = 32;
-    private static int scale = 12;
+    private static int SCALE = 12;
 
     private final GraphicsContext graphicsContext;
 
-    private final int[][] video = new int[WIDTH][HEIGHT];
+    private static int[][] video = new int[WIDTH][HEIGHT];
+    private boolean highResolutionMode = false;
 
     public Screen() {
-        super(WIDTH * scale, HEIGHT * scale);
+        super(WIDTH * SCALE, HEIGHT * SCALE);
         setFocusTraversable(true);
 
         this.graphicsContext = this.getGraphicsContext2D();
@@ -25,7 +27,7 @@ public class Screen extends Canvas {
     public void clear() {
         for (int x = 0; x < WIDTH; x++) {
             for (int y = 0; y < HEIGHT; y++) {
-                this.video[x][y] = 0;
+                video[x][y] = 0;
             }
         }
     }
@@ -33,12 +35,12 @@ public class Screen extends Canvas {
     public void render() {
         for (int x = 0; x < WIDTH; x++) {
             for (int y = 0; y < HEIGHT; y++) {
-                if (this.video[x][y] == 1) {
+                if (video[x][y] == 1) {
                     graphicsContext.setFill(Color.WHITE);
                 } else {
                     graphicsContext.setFill(Color.BLACK);
                 }
-                graphicsContext.fillRect(x * scale, y * scale, scale, scale);
+                graphicsContext.fillRect(x * SCALE, y * SCALE, SCALE, SCALE);
             }
         }
     }
@@ -51,21 +53,43 @@ public class Screen extends Canvas {
         return HEIGHT;
     }
 
-    public static int getScale() {
-        return scale;
+    public static int getSCALE() {
+        return SCALE;
     }
 
-    public boolean draw(int xPos, int col, int yPos, int row) {
+    public boolean drawChip8(int xPos, int col, int yPos, int row) {
         int screenPixel = video[xPos + col][yPos + row];
-        this.video[xPos + col][yPos + row] ^= 1;
+        video[xPos + col][yPos + row] ^= 1;
         return screenPixel == 1;
     }
 
-    public static void setHEIGHT(int height) {
-        Screen.HEIGHT = height;
+    public boolean drawSchip8(int xPos, int col, int yPos, int row) {
+        if (highResolutionMode) {
+            int screenPixel = video[xPos + col][yPos + row];
+            video[xPos + col][yPos + row] ^= 1;
+            return screenPixel == 1;
+        } else {
+            //fixme: vF should be equals to the number of row that collides
+            video[xPos + col][yPos + row] ^= 1;
+            video[xPos + col][yPos + row + 1] ^= 1;
+            video[xPos + col + 1][yPos + row] ^= 1;
+            video[xPos + col + 1][yPos + row + 1] ^= 1;
+            return false;
+        }
     }
 
-    public static void setScale(int scale) {
-        Screen.scale = scale;
+    public static void updateScreenFormat() {
+        WIDTH = Launcher.getHardware().getWidth();
+        HEIGHT = Launcher.getHardware().getHeight();
+        SCALE = Launcher.getHardware().getScale();
+        video = new int[WIDTH][HEIGHT];
+    }
+
+    public void disableHighResolutionMode() {
+        highResolutionMode = false;
+    }
+
+    public void enableHighResolutionMode() {
+        highResolutionMode = true;
     }
 }

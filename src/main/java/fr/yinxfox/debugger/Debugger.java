@@ -23,7 +23,6 @@ import java.util.ArrayList;
 
 public class Debugger extends Thread {
 
-    //TODO: Add opcode decoder
     //TODO: Add ways to change execution speed / pause it
 
     private final static int WIDTH = 600;
@@ -72,7 +71,7 @@ public class Debugger extends Thread {
     }
 
     private void setupDisplay() {
-        this.grid.getColumnConstraints().addAll(new ColumnConstraints(), new ColumnConstraints(), new ColumnConstraints(), new ColumnConstraints(200));
+        this.grid.getColumnConstraints().addAll(new ColumnConstraints(), new ColumnConstraints(), new ColumnConstraints(), new ColumnConstraints(180));
 
         AnchorPane.setTopAnchor(grid, 0.0);
         AnchorPane.setBottomAnchor(grid, 0.0);
@@ -181,7 +180,7 @@ public class Debugger extends Thread {
     }
 
     public void updatePc() {
-        initialPc = (Launcher.getHardware() == Hardware.CHIP8) ? ExecutionWorker.getStartAddress() : ExecutionWorker.getStartAddressHires();
+        initialPc = Launcher.getHardware().getStartAddress();
         for (Label register : registers) {
             if (register.getText().startsWith("PC")) {
                 register.setText("PC " + String.format("0x%04X", initialPc));

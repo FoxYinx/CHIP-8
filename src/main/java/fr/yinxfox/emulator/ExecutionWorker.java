@@ -12,9 +12,6 @@ public class ExecutionWorker extends Thread {
     private static final int OPPS = 500;
     public static boolean UNLOCKED = false;
 
-    private static final int START_ADDRESS = 0x200;
-    private static final int START_ADDRESS_HIRES = 0x2C0;
-    private static final int FONTSET_SIZE = 80;
     private static final int FONTSET_START_ADDRESS = 0x50;
     private static final int[] FONTSET = new int[]{
             0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -34,6 +31,22 @@ public class ExecutionWorker extends Thread {
             0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
             0xF0, 0x80, 0xF0, 0x80, 0x80  // F
     };
+    private static final int FONTSET_SIZE = FONTSET.length;
+
+    private static final int FONTSET_HIGHRES_START_ADDRESS = 0x50 + FONTSET_SIZE;
+    private static final int[] FONTSET_HIGHRES = new int[]{
+            0xC67C, 0xDECE, 0xF6D6, 0xC6E6, 0x007C, // 0
+            0x3010, 0x30F0, 0x3030, 0x3030, 0x00FC, // 1
+            0xCC78, 0x0CCC, 0x3018, 0xCC60, 0x00FC, // 2
+            0xCC78, 0x0C0C, 0x0C38, 0xCC0C, 0x0078, // 3
+            0x1C0C, 0x6C3C, 0xFECC, 0x0C0C, 0x001E, // 4
+            0xC0FC, 0xC0C0, 0x0CF8, 0xCC0C, 0x0078, // 5
+            0x6038, 0xC0C0, 0xCCF8, 0xCCCC, 0x0078, // 6
+            0xC6FE, 0x06C6, 0x180C, 0x3030, 0x0030, // 7
+            0xCC78, 0xECCC, 0xDC78, 0xCCCC, 0x0078, // 8
+            0xC67C, 0xC6C6, 0x0C7E, 0x3018, 0x0070  // 9
+    };
+    private static final int FONTSET_HIGHRES_SIZE = FONTSET_HIGHRES.length;
 
     private final int[] registers;
     private final int[] memory;
@@ -55,13 +68,14 @@ public class ExecutionWorker extends Thread {
         this.registers = new int[16];
         this.memory = new int[4096];
         this.index = 0;
-        this.pc = (Launcher.getHardware() == Hardware.CHIP8) ? START_ADDRESS : START_ADDRESS_HIRES;
+        this.pc = Launcher.getHardware().getStartAddress();
         this.stack = new int[12];
         this.sp = 0;
         this.delayTimer = 0;
         this.soundTimer = 0;
         this.opcode = 0x0000;
         System.arraycopy(FONTSET, 0, this.memory, FONTSET_START_ADDRESS, FONTSET_SIZE);
+        System.arraycopy(FONTSET_HIGHRES, 0, this.memory, FONTSET_HIGHRES_START_ADDRESS, FONTSET_HIGHRES_SIZE);
 
         byte[] data;
         try {
@@ -70,7 +84,7 @@ public class ExecutionWorker extends Thread {
             throw new RuntimeException(e);
         }
         for (int i = 0; i < data.length; i++) {
-            this.memory[START_ADDRESS + i] = data[i] & 0xFF;
+            this.memory[Launcher.getHardware().getStartAddress() + i] = data[i] & 0xFF;
         }
 
         this.video = video;
@@ -117,9 +131,17 @@ public class ExecutionWorker extends Thread {
         switch (opcode >> 12) {
             case 0x0 -> {
                 if (opcode == 0x00E0 || opcode == 0x0230) video.clear();
-                else {
+                else if (opcode == 0x00EE) {
                     sp--;
                     pc = stack[sp];
+                } else if (opcode == 0x00FD) {
+                    System.out.println("Exit interpreter");
+                } else if (opcode == 0x00FE) {
+                    video.disableHighResolutionMode();
+                } else if (opcode == 0x00FF) {
+                    video.enableHighResolutionMode();
+                } else {
+                    handleUnknownOpcode();
                 }
             }
             case 0x1 -> pc = opcode & 0x0FFF;
@@ -140,9 +162,11 @@ public class ExecutionWorker extends Thread {
                 if (registers[Vx] != octet) pc += 2;
             }
             case 0x5 -> {
-                int Vx = (opcode & 0x0F00) >> 8;
-                int Vy = (opcode & 0x00F0) >> 4;
-                if (registers[Vx] == registers[Vy]) pc += 2;
+                if ((opcode & 0x000F) == 0) {
+                    int Vx = (opcode & 0x0F00) >> 8;
+                    int Vy = (opcode & 0x00F0) >> 4;
+                    if (registers[Vx] == registers[Vy]) pc += 2;
+                } else handleUnknownOpcode();
             }
             case 0x6 -> {
                 int Vx = (opcode & 0x0F00) >> 8;
@@ -198,7 +222,7 @@ public class ExecutionWorker extends Thread {
                     case 0x6 -> {
                         int Vx = (opcode & 0x0F00) >> 8;
                         int Vy = (opcode & 0x00F0) >> 4;
-                        registers[Vx] = registers[Vy];
+                        if (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) registers[Vx] = registers[Vy];
                         int VfValue = registers[Vx] & 1;
                         registers[Vx] >>>= 1;
                         registers[0xF] = VfValue;
@@ -214,23 +238,32 @@ public class ExecutionWorker extends Thread {
                     case 0xE -> {
                         int Vx = (opcode & 0x0F00) >> 8;
                         int Vy = (opcode & 0x00F0) >> 4;
-                        registers[Vx] = registers[Vy];
+                        if (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) registers[Vx] = registers[Vy];
                         int VfValue = (registers[Vx] & 0x80) >> 7;
                         registers[Vx] <<= 1;
                         registers[Vx] &= 0xFF;
                         registers[0xF] = VfValue;
                     }
+                    default -> handleUnknownOpcode();
                 }
             }
             case 0x9 -> {
-                int Vx = (opcode & 0x0F00) >> 8;
-                int Vy = (opcode & 0x00F0) >> 4;
-                if (registers[Vx] != registers[Vy]) pc += 2;
+                if ((opcode & 0x000F) == 0) {
+                    int Vx = (opcode & 0x0F00) >> 8;
+                    int Vy = (opcode & 0x00F0) >> 4;
+                    if (registers[Vx] != registers[Vy]) pc += 2;
+                } else handleUnknownOpcode();
             }
             case 0xA -> index = opcode & 0x0FFF;
             case 0xB -> {
-                int address = opcode & 0x0FFF;
-                pc = registers[0] + address;
+                if (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) {
+                    int address = opcode & 0x0FFF;
+                    pc = registers[0] + address;
+                } else if (Launcher.getHardware() == Hardware.SCHIP8) {
+                    int Vx = (opcode & 0x0F00) >> 8;
+                    int address = opcode & 0x0FFF;
+                    pc = registers[Vx] + address;
+                }
             }
             case 0xC -> {
                 int Vx = (opcode & 0x0F00) >> 8;
@@ -238,25 +271,35 @@ public class ExecutionWorker extends Thread {
                 registers[Vx] = (new Random()).nextInt(256) & 0x00FF & octet;
             }
             case 0xD -> {
-                int Vx = (opcode & 0x0F00) >> 8;
-                int Vy = (opcode & 0x00F0) >> 4;
-                int height = opcode & 0x000F;
+                if ((opcode & 0x000F) != 0) {
+                    int Vx = (opcode & 0x0F00) >> 8;
+                    int Vy = (opcode & 0x00F0) >> 4;
+                    int height = opcode & 0x000F;
 
-                int xPos = registers[Vx] % Screen.getWIDTH();
-                int yPos = registers[Vy] % Screen.getHEIGHT();
+                    int xPos = registers[Vx] % Screen.getWIDTH();
+                    int yPos = registers[Vy] % Screen.getHEIGHT();
 
-                registers[0xF] = 0;
+                    registers[0xF] = 0;
 
-                for (int row = 0; row < height; row++) {
-                    int spriteOctet = memory[index + row];
-                    for (int col = 0; col < 8; col++) {
-                        int spritePixel = spriteOctet & (0x80 >> col);
-                        if (spritePixel != 0) {
-                            if (xPos + col >= Screen.getWIDTH() || yPos + row >= Screen.getHEIGHT()) break;
-                            boolean collision = video.draw(xPos, col, yPos, row);
-                            if (collision) registers[0xF] = 1;
+                    for (int row = 0; row < height; row++) {
+                        int spriteOctet = memory[index + row];
+                        for (int col = 0; col < 8; col++) {
+                            int spritePixel = spriteOctet & (0x80 >> col);
+                            if (spritePixel != 0) {
+                                if (xPos + col >= Screen.getWIDTH() || yPos + row >= Screen.getHEIGHT()) break;
+                                if (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) {
+                                    boolean collision = video.drawChip8(xPos, col, yPos, row);
+                                    if (collision) registers[0xF] = 1;
+                                } else if (Launcher.getHardware() == Hardware.SCHIP8) {
+                                    //fixme: vF should be equals to the number of row that collides
+                                    boolean collision = video.drawSchip8(xPos, col, yPos, row);
+                                    if (collision) registers[0xF]++;
+                                }
+                            }
                         }
                     }
+                } else {
+                    //TODO: opcode Dxy0
                 }
             }
             case 0xE -> {
@@ -264,9 +307,9 @@ public class ExecutionWorker extends Thread {
                 int key = registers[Vx];
                 if ((opcode & 0x00FF) == 0x9E) {
                     if (keyboard.isPressed(key)) pc += 2;
-                } else {
+                } else if ((opcode & 0x00FF) == 0xA1){
                     if (!keyboard.isPressed(key)) pc += 2;
-                }
+                } else handleUnknownOpcode();
             }
             case 0xF -> {
                 switch (opcode & 0x00FF) {
@@ -305,6 +348,12 @@ public class ExecutionWorker extends Thread {
                         int digit = registers[Vx];
                         index = FONTSET_START_ADDRESS + (5 * digit);
                     }
+                    case 0x30 -> {
+                        //Fixme: vérifier
+                        int Vx = (opcode & 0x0F00) >> 8;
+                        int digit = registers[Vx];
+                        index = FONTSET_HIGHRES_START_ADDRESS + (10 * digit);
+                    }
                     case 0x33 -> {
                         int Vx = (opcode & 0x0F00) >> 8;
                         int value = registers[Vx];
@@ -317,18 +366,28 @@ public class ExecutionWorker extends Thread {
                     case 0x55 -> {
                         int Vx = (opcode & 0x0F00) >> 8;
                         System.arraycopy(registers, 0, memory, index, Vx + 1);
-                        index += Vx + 1;
+                        if (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) {
+                            index += Vx + 1;
+                        }
                     }
                     case 0x65 -> {
                         int Vx = (opcode & 0x0F00) >> 8;
                         for (int i = 0; i <= Vx; i++) {
                             registers[i] = memory[index + i] & 0xFF;
                         }
-                        index += Vx + 1;
+                        if (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) {
+                            index += Vx + 1;
+                        }
                     }
+                    default -> handleUnknownOpcode();
                 }
             }
         }
+    }
+
+    private void handleUnknownOpcode() {
+        System.out.println("At PC: " + String.format("0x%04X", pc - 2));
+        System.out.println("Found unknown opcode: " + String.format("0x%04X", opcode));
     }
 
     public Object getLock() {
@@ -361,14 +420,6 @@ public class ExecutionWorker extends Thread {
 
     public int getSoundTimer() {
         return soundTimer;
-    }
-
-    public static int getStartAddress() {
-        return START_ADDRESS;
-    }
-
-    public static int getStartAddressHires() {
-        return START_ADDRESS_HIRES;
     }
 
     public int[] getMemory() {

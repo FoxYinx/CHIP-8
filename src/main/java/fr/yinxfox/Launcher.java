@@ -18,6 +18,8 @@ import java.io.File;
 
 public class Launcher extends Application {
 
+    //fixme: CHIP hires doesn't work
+
     //TODO: Add tests
     //TODO: Remove Hardware menu and link the hardware selection to the rom
     //TODO: Add SCHIP-8 1.1 support
@@ -54,7 +56,7 @@ public class Launcher extends Application {
         }
     }
 
-    private void loadROM(String filePath) {
+    public void loadROM(String filePath) {
         restartEmulator(filePath);
         System.out.println(filePath + " has been loaded!");
         this.timeline.play();
@@ -98,8 +100,7 @@ public class Launcher extends Application {
             if (this.executionWorker != null) this.executionWorker.interrupt();
             hardware = Hardware.CHIP8;
             this.mainStage.setTitle(hardware.toString());
-            Screen.setHEIGHT(32);
-            Screen.setScale(12);
+            Screen.updateScreenFormat();
             this.initializeStage();
             if (debugger != null) debugger.updatePc();
         });
@@ -109,15 +110,19 @@ public class Launcher extends Application {
             if (this.executionWorker != null) this.executionWorker.interrupt();
             hardware = Hardware.CHIP8HIRES;
             this.mainStage.setTitle(hardware.toString());
-            Screen.setHEIGHT(64);
-            Screen.setScale(10);
+            Screen.updateScreenFormat();
             this.initializeStage();
             if (debugger != null) debugger.updatePc();
         });
         RadioMenuItem schip8Item = new RadioMenuItem(Hardware.SCHIP8.toString());
         schip8Item.setOnAction(_ -> {
+            this.timeline.stop();
+            if (this.executionWorker != null) this.executionWorker.interrupt();
             hardware = Hardware.SCHIP8;
             this.mainStage.setTitle(hardware.toString());
+            Screen.updateScreenFormat();
+            this.initializeStage();
+            if (debugger != null) debugger.updatePc();
         });
         RadioMenuItem xochipItem = new RadioMenuItem(Hardware.XOCHIP.toString());
         xochipItem.setOnAction(_ -> {
