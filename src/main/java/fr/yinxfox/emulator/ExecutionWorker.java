@@ -68,7 +68,7 @@ public class ExecutionWorker extends Thread {
         this.registers = new int[16];
         this.memory = new int[4096];
         this.index = 0;
-        this.pc = Launcher.getHardware().getStartAddress();
+        this.pc = 0x0200;
         this.stack = new int[12];
         this.sp = 0;
         this.delayTimer = 0;
@@ -84,7 +84,7 @@ public class ExecutionWorker extends Thread {
             throw new RuntimeException(e);
         }
         for (int i = 0; i < data.length; i++) {
-            this.memory[Launcher.getHardware().getStartAddress() + i] = data[i] & 0xFF;
+            this.memory[this.pc + i] = data[i] & 0xFF;
         }
 
         this.video = video;
@@ -127,7 +127,7 @@ public class ExecutionWorker extends Thread {
     }
 
     private void execute() throws InterruptedException {
-        // System.out.println("Read opcode: " + String.format("0x%04X", opcode));
+        //System.out.println("Read opcode: " + String.format("0x%04X", opcode) + " at PC: " + String.format("0x%04X", pc - 2));
         switch (opcode >> 12) {
             case 0x0 -> {
                 if (opcode == 0x00E0 || opcode == 0x0230) video.clear();

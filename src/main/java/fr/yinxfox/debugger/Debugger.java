@@ -162,7 +162,7 @@ public class Debugger extends Thread {
         createLabel("REGISTERS", registers);
         createLabel("Reg Value", registers);
         createLabel("---------", registers);
-        createLabel("PC 0x0000", registers);
+        createLabel("PC 0x0200", registers);
         createLabel("         ", registers);
         createLabel("I   0x000", registers);
         for (int i = 0; i < 16; i++) {
@@ -174,17 +174,6 @@ public class Debugger extends Thread {
 
         for (int i = 0; i < registers.size(); i++) {
             this.grid.add(registers.get(i), 0, i);
-        }
-
-        this.updatePc();
-    }
-
-    public void updatePc() {
-        initialPc = Launcher.getHardware().getStartAddress();
-        for (Label register : registers) {
-            if (register.getText().startsWith("PC")) {
-                register.setText("PC " + String.format("0x%04X", initialPc));
-            }
         }
     }
 

@@ -18,8 +18,6 @@ import java.io.File;
 
 public class Launcher extends Application {
 
-    //fixme: CHIP hires doesn't work
-
     //TODO: Add tests
     //TODO: Remove Hardware menu and link the hardware selection to the rom
     //TODO: Add SCHIP-8 1.1 support
@@ -102,7 +100,6 @@ public class Launcher extends Application {
             this.mainStage.setTitle(hardware.toString());
             Screen.updateScreenFormat();
             this.initializeStage();
-            if (debugger != null) debugger.updatePc();
         });
         RadioMenuItem chip8HiresItem = new RadioMenuItem(Hardware.CHIP8HIRES.toString());
         chip8HiresItem.setOnAction(_ -> {
@@ -112,7 +109,6 @@ public class Launcher extends Application {
             this.mainStage.setTitle(hardware.toString());
             Screen.updateScreenFormat();
             this.initializeStage();
-            if (debugger != null) debugger.updatePc();
         });
         RadioMenuItem schip8Item = new RadioMenuItem(Hardware.SCHIP8.toString());
         schip8Item.setOnAction(_ -> {
@@ -122,7 +118,6 @@ public class Launcher extends Application {
             this.mainStage.setTitle(hardware.toString());
             Screen.updateScreenFormat();
             this.initializeStage();
-            if (debugger != null) debugger.updatePc();
         });
         RadioMenuItem xochipItem = new RadioMenuItem(Hardware.XOCHIP.toString());
         xochipItem.setOnAction(_ -> {
