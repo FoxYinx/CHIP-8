@@ -21,8 +21,6 @@ import java.util.ArrayList;
 
 public class Debugger extends Thread {
 
-    //TODO: Color current opcode and future executed opcode
-
     private final static int WIDTH = 600;
     private final static int HEIGHT = -1;
 
@@ -209,6 +207,9 @@ public class Debugger extends Thread {
         int pc = executionWorker.getPc();
         int j = 3;
         for (int i = pc - nbMemory; i <= pc + nbMemory; i += 2) {
+            if (i == pc - 2) opcodes.get(j - 1).setBackground(Background.EMPTY);
+            if (i == pc) opcodes.get(j - 1).setBackground(Background.fill(Color.GREEN));
+            if (i == pc + 2) opcodes.get(j - 1).setBackground(Background.fill(Color.YELLOW));
             opcodes.get(j).setText(OpcodeTranslator.decodeOp((executionWorker.getMemory()[i] << 8) | executionWorker.getMemory()[i + 1]));
             j++;
         }
