@@ -9,8 +9,9 @@ import java.util.Random;
 
 public class ExecutionWorker extends Thread {
 
-    private static final int OPPS = 500;
+    private static int OPPS = 500;
     public static boolean UNLOCKED = false;
+    public static boolean PAUSED = false;
 
     private static final int FONTSET_START_ADDRESS = 0x50;
     private static final int[] FONTSET = new int[]{
@@ -63,6 +64,7 @@ public class ExecutionWorker extends Thread {
 
     private final Object lock = new Object();
     private final Object sleep = new Object();
+    private final Object pause = new Object();
 
     public ExecutionWorker(String filename, Screen video, Keyboard keyboard, SoundMaker soundMaker) {
         this.registers = new int[16];
@@ -115,8 +117,14 @@ public class ExecutionWorker extends Thread {
 
     public void cycle() throws InterruptedException {
         if (!UNLOCKED) {
-            synchronized (sleep) {
-                sleep.wait((long) 1000 / OPPS);
+            if (PAUSED) {
+                synchronized (pause) {
+                    pause.wait();
+                }
+            } else {
+                synchronized (sleep) {
+                    sleep.wait((long) 1000 / OPPS);
+                }
             }
         }
 
@@ -424,5 +432,13 @@ public class ExecutionWorker extends Thread {
 
     public int[] getMemory() {
         return memory;
+    }
+
+    public static void setOPPS(int OPPS) {
+        ExecutionWorker.OPPS = OPPS;
+    }
+
+    public Object getPause() {
+        return pause;
     }
 }

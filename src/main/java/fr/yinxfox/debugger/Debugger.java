@@ -2,17 +2,15 @@ package fr.yinxfox.debugger;
 
 import fr.yinxfox.Launcher;
 import fr.yinxfox.emulator.ExecutionWorker;
-import fr.yinxfox.emulator.Hardware;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.HPos;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
+import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -23,10 +21,10 @@ import java.util.ArrayList;
 
 public class Debugger extends Thread {
 
-    //TODO: Add ways to change execution speed / pause it
+    //TODO: Color current opcode and future executed opcode
 
     private final static int WIDTH = 600;
-    private final static int HEIGHT = 600;
+    private final static int HEIGHT = -1;
 
     private final static Font LIBE = new Font("Liberation Mono", 18);
     private final ArrayList<Label> registers = new ArrayList<>();
@@ -35,11 +33,12 @@ public class Debugger extends Thread {
     private final int nbMemory = 18;
     private final ArrayList<Label> opcodes = new ArrayList<>();
     private static final double FPS = Launcher.getFPS();
-    private static int initialPc;
+    private final static int initialPc = 0x0200;
 
     private final Stage mainStage;
     private final Scene mainScene;
     private final AnchorPane anchor;
+    private MenuBar menuBar;
     private final GridPane grid;
     private ExecutionWorker executionWorker;
     private Timeline timeline;
@@ -49,7 +48,11 @@ public class Debugger extends Thread {
         this.grid = new GridPane();
         this.anchor = new AnchorPane();
         this.anchor.getChildren().add(grid);
-        this.mainScene = new Scene(this.anchor, WIDTH, HEIGHT);
+        this.createMenuBar();
+        VBox root = new VBox();
+        root.getChildren().add(menuBar);
+        root.getChildren().add(this.anchor);
+        this.mainScene = new Scene(root, WIDTH, HEIGHT);
         this.mainScene.setFill(Color.RED);
         this.mainStage = new Stage();
 
@@ -62,7 +65,11 @@ public class Debugger extends Thread {
         this.grid = new GridPane();
         this.anchor = new AnchorPane();
         this.anchor.getChildren().add(grid);
-        this.mainScene = new Scene(this.anchor, WIDTH, HEIGHT);
+        this.createMenuBar();
+        VBox root = new VBox();
+        root.getChildren().add(menuBar);
+        root.getChildren().add(this.anchor);
+        this.mainScene = new Scene(root, WIDTH, HEIGHT);
         this.mainScene.setFill(Color.RED);
         this.mainStage = new Stage();
 
@@ -102,6 +109,55 @@ public class Debugger extends Thread {
         this.setupOpcodes();
 
         this.mainStage.show();
+    }
+
+    private void createMenuBar() {
+        menuBar = new MenuBar();
+        ToggleGroup speedGroup = new ToggleGroup();
+        Menu menuSpeed = new Menu("Speed (OPPS)");
+        RadioMenuItem tenItem = new RadioMenuItem("10");
+        tenItem.setOnAction(_ -> ExecutionWorker.setOPPS(10));
+        menuSpeed.getItems().add(tenItem);
+        RadioMenuItem hundredItem = new RadioMenuItem("100");
+        hundredItem.setOnAction(_ -> ExecutionWorker.setOPPS(100));
+        menuSpeed.getItems().add(hundredItem);
+        RadioMenuItem fiveHundredItem = new RadioMenuItem("500");
+        fiveHundredItem.setSelected(true);
+        fiveHundredItem.setOnAction(_ -> ExecutionWorker.setOPPS(500));
+        menuSpeed.getItems().add(fiveHundredItem);
+        RadioMenuItem thousandItem = new RadioMenuItem("1000");
+        thousandItem.setOnAction(_ -> ExecutionWorker.setOPPS(1000));
+        menuSpeed.getItems().add(thousandItem);
+        tenItem.setToggleGroup(speedGroup);
+        hundredItem.setToggleGroup(speedGroup);
+        fiveHundredItem.setToggleGroup(speedGroup);
+        thousandItem.setToggleGroup(speedGroup);
+
+        Menu controlMenu = new Menu("Control");
+        RadioMenuItem pauseItem = new RadioMenuItem("Pause");
+        pauseItem.setOnAction(_ -> {
+            if (executionWorker != null && ExecutionWorker.PAUSED) {
+                synchronized (executionWorker.getPause()) {
+                    executionWorker.getPause().notify();
+                }
+            }
+            ExecutionWorker.PAUSED = !ExecutionWorker.PAUSED;
+        });
+        pauseItem.setAccelerator(new KeyCodeCombination(KeyCode.F6));
+        MenuItem stepItem = new MenuItem("Step");
+        stepItem.setOnAction(_ -> {
+            if (executionWorker != null && ExecutionWorker.PAUSED) {
+                synchronized (executionWorker.getPause()) {
+                    executionWorker.getPause().notify();
+                }
+            }
+        });
+        stepItem.setAccelerator(new KeyCodeCombination(KeyCode.F3));
+        controlMenu.getItems().add(pauseItem);
+        controlMenu.getItems().add(stepItem);
+
+        menuBar.getMenus().add(menuSpeed);
+        menuBar.getMenus().add(controlMenu);
     }
 
     private void updateRegisters() {
