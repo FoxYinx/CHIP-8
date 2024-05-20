@@ -222,6 +222,10 @@ public class Launcher extends Application {
         return hardware;
     }
 
+    public static void setHardware(Hardware hardware) {
+        Launcher.hardware = hardware;
+    }
+
     public static double getFPS() {
         return FPS;
     }

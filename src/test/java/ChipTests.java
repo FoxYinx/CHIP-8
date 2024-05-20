@@ -12,8 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ChipTests {
 
-    //TODO: Add tests for CHIP-8 hires
-
     @Test
     public void coraxTest() throws InterruptedException {
         ExecutionWorker emu = new ExecutionWorker("src/test/resources/chip8/3-corax+.ch8");
