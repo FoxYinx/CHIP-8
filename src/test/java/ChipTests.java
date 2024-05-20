@@ -1,8 +1,5 @@
 import fr.yinxfox.emulator.ExecutionWorker;
 import fr.yinxfox.emulator.Screen;
-import javafx.application.Application;
-import javafx.stage.Stage;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

@@ -2,7 +2,6 @@ package fr.yinxfox.debugger;
 
 import fr.yinxfox.Launcher;
 import fr.yinxfox.emulator.ExecutionWorker;
-import fr.yinxfox.emulator.Screen;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -18,7 +17,6 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 
 public class Debugger extends Thread {
