@@ -69,7 +69,7 @@ public class Screen extends Canvas {
             video[xPos + col][yPos + row] ^= 1;
             return screenPixel == 1;
         } else {
-            //fixme: vF should be equals to the number of row that collides
+            //fixme: (SCHIP & XO-CHIP) vF should be equals to the number of row that collides
             video[xPos + col][yPos + row] ^= 1;
             video[xPos + col][yPos + row + 1] ^= 1;
             video[xPos + col + 1][yPos + row] ^= 1;

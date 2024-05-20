@@ -299,7 +299,7 @@ public class ExecutionWorker extends Thread {
                                     boolean collision = video.drawChip8(xPos, col, yPos, row);
                                     if (collision) registers[0xF] = 1;
                                 } else if (Launcher.getHardware() == Hardware.SCHIP8) {
-                                    //fixme: vF should be equals to the number of row that collides
+                                    //fixme: (SCHIP & XO-CHIP) vF should be equals to the number of row that collides
                                     boolean collision = video.drawSchip8(xPos, col, yPos, row);
                                     if (collision) registers[0xF]++;
                                 }
@@ -307,7 +307,7 @@ public class ExecutionWorker extends Thread {
                         }
                     }
                 } else {
-                    //TODO: opcode Dxy0
+                    //TODO: (SCHIP & XO-CHIP) opcode Dxy0
                 }
             }
             case 0xE -> {
@@ -357,7 +357,7 @@ public class ExecutionWorker extends Thread {
                         index = FONTSET_START_ADDRESS + (5 * digit);
                     }
                     case 0x30 -> {
-                        //Fixme: vérifier
+                        //Fixme: (SCHIP & XO-CHIP) vérifier
                         int Vx = (opcode & 0x0F00) >> 8;
                         int digit = registers[Vx];
                         index = FONTSET_HIGHRES_START_ADDRESS + (10 * digit);

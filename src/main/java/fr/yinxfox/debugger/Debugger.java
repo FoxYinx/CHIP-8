@@ -234,7 +234,7 @@ public class Debugger extends Thread {
         }
     }
 
-    //Fixme: la taille du stack change avec le CHIP choisit
+    //Fixme: (SCHIP & XO-CHIP) la taille du stack change avec le CHIP choisit
 
     private void setupStack() {
         createLabel("STACK", stack);
