@@ -18,7 +18,6 @@ import java.io.File;
 
 public class Launcher extends Application {
 
-    //fixme: On linux window open on the wrong screen
     //TODO: Remove Hardware menu and link the hardware selection to the rom
     //TODO: Add SCHIP-8 1.1 support
     //TODO: Add XO-CHIP support
@@ -178,6 +177,7 @@ public class Launcher extends Application {
         this.mainStage.setResizable(false);
         this.mainStage.setScene(mainScene);
         this.mainStage.show();
+        mainScene.getWindow().centerOnScreen();
         this.mainStage.setTitle(hardware.toString());
     }
 
