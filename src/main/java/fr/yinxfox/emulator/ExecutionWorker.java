@@ -389,7 +389,6 @@ public class ExecutionWorker extends Thread {
                         index = FONTSET_START_ADDRESS + (5 * digit);
                     }
                     case 0x30 -> {
-                        //Fixme: (SCHIP & XO-CHIP) vérifier
                         int Vx = (opcode & 0x0F00) >> 8;
                         int digit = registers[Vx];
                         index = FONTSET_HIGHRES_START_ADDRESS + (10 * digit);
