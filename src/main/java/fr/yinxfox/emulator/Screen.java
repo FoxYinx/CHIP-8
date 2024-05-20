@@ -92,4 +92,8 @@ public class Screen extends Canvas {
     public void enableHighResolutionMode() {
         highResolutionMode = true;
     }
+
+    public static int[][] getVideo() {
+        return video;
+    }
 }

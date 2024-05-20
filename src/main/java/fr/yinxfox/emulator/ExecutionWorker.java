@@ -66,6 +66,38 @@ public class ExecutionWorker extends Thread {
     private final Object sleep = new Object();
     private final Object pause = new Object();
 
+    public ExecutionWorker(String filename) {
+        this.registers = new int[16];
+        this.memory = new int[4096];
+        this.index = 0;
+        this.pc = 0x0200;
+        this.stack = new int[12];
+        this.sp = 0;
+        this.delayTimer = 0;
+        this.soundTimer = 0;
+        this.opcode = 0x0000;
+        System.arraycopy(FONTSET, 0, this.memory, FONTSET_START_ADDRESS, FONTSET_SIZE);
+        System.arraycopy(FONTSET_HIGHRES, 0, this.memory, FONTSET_HIGHRES_START_ADDRESS, FONTSET_HIGHRES_SIZE);
+
+        byte[] data;
+        try {
+            data = Files.readAllBytes(Path.of(filename));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        for (int i = 0; i < data.length; i++) {
+            this.memory[this.pc + i] = data[i] & 0xFF;
+        }
+
+        this.video = new Screen();
+        this.keyboard = null;
+        this.soundMaker = null;
+
+        UNLOCKED = true;
+
+        this.start();
+    }
+
     public ExecutionWorker(String filename, Screen video, Keyboard keyboard, SoundMaker soundMaker) {
         this.registers = new int[16];
         this.memory = new int[4096];
