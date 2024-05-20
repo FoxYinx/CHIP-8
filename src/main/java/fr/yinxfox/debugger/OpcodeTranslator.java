@@ -2,6 +2,8 @@ package fr.yinxfox.debugger;
 
 public class OpcodeTranslator {
 
+    //TODO: update to match SCHIP opcodes
+
     public static String decodeOp(int opcode) {
         switch (opcode >> 12) {
             case 0x0 -> {

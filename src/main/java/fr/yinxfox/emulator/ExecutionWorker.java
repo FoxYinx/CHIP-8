@@ -176,6 +176,7 @@ public class ExecutionWorker extends Thread {
                     pc = stack[sp];
                 } else if (opcode == 0x00FD) {
                     System.out.println("Exit interpreter");
+                    this.interrupt();
                 } else if (opcode == 0x00FE) {
                     video.disableHighResolutionMode();
                 } else if (opcode == 0x00FF) {
@@ -331,7 +332,7 @@ public class ExecutionWorker extends Thread {
                                     boolean collision = video.drawChip8(xPos, col, yPos, row);
                                     if (collision) registers[0xF] = 1;
                                 } else if (Launcher.getHardware() == Hardware.SCHIP8) {
-                                    //fixme: (SCHIP & XO-CHIP) vF should be equals to the number of row that collides
+                                    //fixme: (SCHIP & XO-CHIP) vF should be equals to the number of row that collides in high resolution mode
                                     boolean collision = video.drawSchip8(xPos, col, yPos, row);
                                     if (collision) registers[0xF]++;
                                 }
@@ -340,6 +341,28 @@ public class ExecutionWorker extends Thread {
                     }
                 } else {
                     //TODO: (SCHIP & XO-CHIP) opcode Dxy0
+                    if (video.isHighResolutionMode()){
+                        int Vx = (opcode & 0x0F00) >> 8;
+                        int Vy = (opcode & 0x00F0) >> 4;
+
+                        int xPos = registers[Vx] % Screen.getWIDTH();
+                        int yPos = registers[Vy] % Screen.getHEIGHT();
+
+                        registers[0xF] = 0;
+
+                        for (int row = 0; row < 16; row++) {
+                            int spriteOctet = memory[index + row];
+                            for (int col = 0; col < 16; col++) {
+                                int spritePixel = spriteOctet & (0x80 >> col);
+                                if (spritePixel != 0) {
+                                    if (xPos + col >= Screen.getWIDTH() || yPos + row >= Screen.getHEIGHT()) break;
+                                    //fixme: (SCHIP & XO-CHIP) vF should be equals to the number of row that collides in high resolution mode
+                                    boolean collision = video.drawSchip8(xPos, col, yPos, row);
+                                    if (collision) registers[0xF]++;
+                                }
+                            }
+                        }
+                    }
                 }
             }
             case 0xE -> {
