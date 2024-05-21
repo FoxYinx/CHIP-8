@@ -2,6 +2,7 @@ package fr.yinxfox.debugger;
 
 import fr.yinxfox.Launcher;
 import fr.yinxfox.emulator.ExecutionWorker;
+import fr.yinxfox.emulator.Hardware;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -29,6 +30,7 @@ public class Debugger extends Thread {
     private final ArrayList<Label> stack = new ArrayList<>();
     private final ArrayList<Label> memory = new ArrayList<>();
     private final int nbMemory = 18;
+    private int stackSize;
     private final ArrayList<Label> opcodes = new ArrayList<>();
     private static final double FPS = Launcher.getFPS();
     private final static int initialPc = 0x0200;
@@ -186,10 +188,10 @@ public class Debugger extends Thread {
             if (stack.get(i).getText().startsWith("SP")) {
                 stack.get(i).setText("SP     " + String.format("%02d", executionWorker.getSp()));
             } else if (stack.get(i).getText().startsWith("00")) {
-                for (int j = 0; j < 12; j++) {
+                for (int j = 0; j < stackSize; j++) {
                     stack.get(i + j).setText(String.format("%02d", j) + "  " + String.format("0x%03X", executionWorker.getStack()[j]));
                 }
-                i += 11;
+                i += stackSize - 1;
             }
         }
     }
@@ -234,20 +236,38 @@ public class Debugger extends Thread {
         }
     }
 
-    //Fixme: (SCHIP & XO-CHIP) la taille du stack change avec le CHIP choisit
-
     private void setupStack() {
+        stackSize = (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) ? 12 : 16;
         createLabel("STACK", stack);
         createLabel("Lv Value", stack);
         createLabel("---------", stack);
         createLabel("SP     00", stack);
         createLabel("         ", stack);
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < 16; i++) {
             createLabel(String.format("%02d", i) + "  0x000", stack);
+        }
+
+        if (stackSize == 12) {
+            for (int i = 17; i < stack.size(); i++) {
+                stack.get(i).setText("");
+            }
         }
 
         for (int i = 0; i < stack.size(); i++) {
             this.grid.add(stack.get(i), 1, i);
+        }
+    }
+
+    public void updateStackDisplay() {
+        stackSize = (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) ? 12 : 16;
+        if (stackSize == 12) {
+            for (int i = 17; i < stack.size(); i++) {
+                stack.get(i).setText("");
+            }
+        } else {
+            for (int i = 17; i < stack.size(); i++) {
+                stack.get(i).setText(String.format("%02d", i - 5) + "  0x000");
+            }
         }
     }
 

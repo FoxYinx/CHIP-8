@@ -55,6 +55,7 @@ public class ExecutionWorker extends Thread {
     private int sp;
     private int index;
     private final int[] stack;
+    private final int[] rpl;
     private int opcode;
     private int delayTimer;
     private int soundTimer;
@@ -71,7 +72,8 @@ public class ExecutionWorker extends Thread {
         this.memory = new int[4096];
         this.index = 0;
         this.pc = 0x0200;
-        this.stack = new int[12];
+        this.stack = (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) ? new int[12] :  new int[16];
+        this.rpl = new int[7];
         this.sp = 0;
         this.delayTimer = 0;
         this.soundTimer = 0;
@@ -103,7 +105,8 @@ public class ExecutionWorker extends Thread {
         this.memory = new int[4096];
         this.index = 0;
         this.pc = 0x0200;
-        this.stack = new int[12];
+        this.stack = (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) ? new int[12] :  new int[16];
+        this.rpl = new int[7];
         this.sp = 0;
         this.delayTimer = 0;
         this.soundTimer = 0;

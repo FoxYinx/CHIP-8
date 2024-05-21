@@ -96,6 +96,7 @@ public class Launcher extends Application {
             this.timeline.stop();
             if (this.executionWorker != null) this.executionWorker.interrupt();
             hardware = Hardware.CHIP8;
+            if (debugger != null) debugger.updateStackDisplay();
             this.mainStage.setTitle(hardware.toString());
             Screen.updateScreenFormat();
             this.initializeStage();
@@ -105,6 +106,7 @@ public class Launcher extends Application {
             this.timeline.stop();
             if (this.executionWorker != null) this.executionWorker.interrupt();
             hardware = Hardware.CHIP8HIRES;
+            if (debugger != null) debugger.updateStackDisplay();
             this.mainStage.setTitle(hardware.toString());
             Screen.updateScreenFormat();
             this.initializeStage();
@@ -114,6 +116,7 @@ public class Launcher extends Application {
             this.timeline.stop();
             if (this.executionWorker != null) this.executionWorker.interrupt();
             hardware = Hardware.SCHIP8;
+            if (debugger != null) debugger.updateStackDisplay();
             this.mainStage.setTitle(hardware.toString());
             Screen.updateScreenFormat();
             this.initializeStage();
@@ -177,7 +180,7 @@ public class Launcher extends Application {
         this.mainStage.setResizable(false);
         this.mainStage.setScene(mainScene);
         this.mainStage.show();
-        mainScene.getWindow().centerOnScreen();
+        if (!System.getProperty("os.name").contains("Windows")) mainScene.getWindow().centerOnScreen();
         this.mainStage.setTitle(hardware.toString());
     }
 
