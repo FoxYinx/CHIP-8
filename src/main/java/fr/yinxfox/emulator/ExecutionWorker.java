@@ -186,7 +186,8 @@ public class ExecutionWorker extends Thread {
                 } else if (opcode == 0x00FF) {
                     video.enableHighResolutionMode();
                 } else if ((opcode & 0xFFF0) == 0x00C0) {
-                    System.out.println("Scroll down");
+                    int N = opcode & 0x000F;
+                    video.scrollDown(N);
                 } else if (opcode == 0x00FB) {
                     video.scrollRight();
                 } else if (opcode == 0x00FC) {

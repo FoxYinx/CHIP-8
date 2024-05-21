@@ -80,6 +80,20 @@ public class Screen extends Canvas {
         }
     }
 
+    public void scrollDown(int offset) {
+        int gap = (highResolutionMode) ? offset : offset * 2;
+        for (int i = 0; i < WIDTH; i++) {
+            for (int j = HEIGHT - 1; j >= gap; j--) {
+                video[i][j] = video[i][j - gap];
+            }
+        }
+        for (int i = 0; i < WIDTH; i++) {
+            for (int j = 0; j < gap; j++) {
+                video[i][j] = 0;
+            }
+        }
+    }
+
     public void scrollLeft() {
         int gap = (highResolutionMode) ? 4 : 8;
         for (int i = gap; i < WIDTH; i++) {
