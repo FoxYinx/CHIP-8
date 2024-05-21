@@ -80,6 +80,26 @@ public class Screen extends Canvas {
         }
     }
 
+    public void scrollLeft() {
+        int gap = (highResolutionMode) ? 4 : 8;
+        for (int i = gap; i < WIDTH; i++) {
+            video[i - gap] = video[i];
+        }
+        for (int i = WIDTH - gap - 1; i < WIDTH; i++) {
+            video[i] = new int[HEIGHT];
+        }
+    }
+
+    public void scrollRight() {
+        int gap = (highResolutionMode) ? 4 : 8;
+        for (int i = WIDTH - gap - 1; i >= 0; i--) {
+            System.arraycopy(video[i], 0, video[i + gap], 0, HEIGHT);
+        }
+        for (int i = 0; i < gap; i++) {
+            video[i] = new int[HEIGHT];
+        }
+    }
+
     public static void updateScreenFormat() {
         WIDTH = Launcher.getHardware().getWidth();
         HEIGHT = Launcher.getHardware().getHeight();

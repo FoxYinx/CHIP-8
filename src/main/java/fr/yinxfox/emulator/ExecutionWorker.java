@@ -73,7 +73,7 @@ public class ExecutionWorker extends Thread {
         this.index = 0;
         this.pc = 0x0200;
         this.stack = (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) ? new int[12] :  new int[16];
-        this.rpl = new int[7];
+        this.rpl = new int[8];
         this.sp = 0;
         this.delayTimer = 0;
         this.soundTimer = 0;
@@ -106,7 +106,7 @@ public class ExecutionWorker extends Thread {
         this.index = 0;
         this.pc = 0x0200;
         this.stack = (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) ? new int[12] :  new int[16];
-        this.rpl = new int[7];
+        this.rpl = new int[8];
         this.sp = 0;
         this.delayTimer = 0;
         this.soundTimer = 0;
@@ -185,6 +185,12 @@ public class ExecutionWorker extends Thread {
                     video.disableHighResolutionMode();
                 } else if (opcode == 0x00FF) {
                     video.enableHighResolutionMode();
+                } else if ((opcode & 0xFFF0) == 0x00C0) {
+                    System.out.println("Scroll down");
+                } else if (opcode == 0x00FB) {
+                    video.scrollRight();
+                } else if (opcode == 0x00FC) {
+                    video.scrollLeft();
                 } else {
                     handleUnknownOpcode();
                 }
@@ -444,6 +450,14 @@ public class ExecutionWorker extends Thread {
                         if (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) {
                             index += Vx + 1;
                         }
+                    }
+                    case 0x75 -> {
+                        int Vx = (opcode & 0x0F00) >> 8;
+                        System.arraycopy(registers, 0, rpl, 0, Vx + 1);
+                    }
+                    case 0x85 -> {
+                        int Vx = (opcode & 0x0F00) >> 8;
+                        System.arraycopy(rpl, 0, registers, 0, Vx + 1);
                     }
                     default -> handleUnknownOpcode();
                 }
