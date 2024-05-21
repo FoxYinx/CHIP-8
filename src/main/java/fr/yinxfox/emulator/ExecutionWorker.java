@@ -125,6 +125,7 @@ public class ExecutionWorker extends Thread {
         }
 
         this.video = video;
+        this.video.disableHighResolutionMode();
         this.keyboard = keyboard;
         this.soundMaker = soundMaker;
 
