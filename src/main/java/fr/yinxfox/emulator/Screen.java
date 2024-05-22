@@ -72,11 +72,13 @@ public class Screen extends Canvas {
             //fixme: (SCHIP & XO-CHIP) vF should be equals to the number of row that collides in high resolution mode
             int x = (xPos + col) * 2;
             int y = (yPos + row) * 2;
+            if (x >= video.length || y >= video[0].length) return false;
+            int collision = video[x][y] | video[x][y + 1] | video[x + 1][y] | video[x + 1][y + 1];
             video[x][y] ^= 1;
             video[x][y + 1] ^= 1;
             video[x + 1][y] ^= 1;
             video[x + 1][y + 1] ^= 1;
-            return false;
+            return collision == 1;
         }
     }
 

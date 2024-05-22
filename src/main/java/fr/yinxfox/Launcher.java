@@ -180,6 +180,9 @@ public class Launcher extends Application {
         this.mainStage.setResizable(false);
         this.mainStage.setScene(mainScene);
         this.mainStage.show();
+
+        //fixme: should not always center the window
+
         if (!System.getProperty("os.name").contains("Windows")) mainScene.getWindow().centerOnScreen();
         this.mainStage.setTitle(hardware.toString());
     }
