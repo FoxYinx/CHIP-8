@@ -351,9 +351,7 @@ public class ExecutionWorker extends Thread {
                         }
                     }
                 } else {
-                    //TODO: (SCHIP & XO-CHIP) opcode Dxy0
                     if (video.isHighResolutionMode()){
-                        System.out.println("Je print");
                         int Vx = (opcode & 0x0F00) >> 8;
                         int Vy = (opcode & 0x00F0) >> 4;
 
@@ -363,7 +361,7 @@ public class ExecutionWorker extends Thread {
                         registers[0xF] = 0;
 
                         for (int row = 0; row < 16; row++) {
-                            int spriteOctet = memory[index + row];
+                            int spriteOctet = (memory[index + row * 2] << 8) + memory[index + row * 2 + 1];
                             for (int col = 0; col < 16; col++) {
                                 int spritePixel = spriteOctet & (0x8000 >> col);
                                 if (spritePixel != 0) {

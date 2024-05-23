@@ -18,8 +18,8 @@ import java.io.File;
 
 public class Launcher extends Application {
 
-    //TODO: Remove Hardware menu and link the hardware selection to the rom
     //TODO: Add SCHIP-8 1.1 support
+    //TODO: Pass quirks test for SCHIP-8 1.1
     //TODO: Add XO-CHIP support
 
     private static Debugger debugger = null;
