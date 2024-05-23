@@ -353,6 +353,7 @@ public class ExecutionWorker extends Thread {
                 } else {
                     //TODO: (SCHIP & XO-CHIP) opcode Dxy0
                     if (video.isHighResolutionMode()){
+                        System.out.println("Je print");
                         int Vx = (opcode & 0x0F00) >> 8;
                         int Vy = (opcode & 0x00F0) >> 4;
 
@@ -364,7 +365,7 @@ public class ExecutionWorker extends Thread {
                         for (int row = 0; row < 16; row++) {
                             int spriteOctet = memory[index + row];
                             for (int col = 0; col < 16; col++) {
-                                int spritePixel = spriteOctet & (0x80 >> col);
+                                int spritePixel = spriteOctet & (0x8000 >> col);
                                 if (spritePixel != 0) {
                                     if (xPos + col >= Screen.getWIDTH() || yPos + row >= Screen.getHEIGHT()) break;
                                     //fixme: (SCHIP & XO-CHIP) vF should be equals to the number of row that collides in high resolution mode
@@ -381,7 +382,7 @@ public class ExecutionWorker extends Thread {
                 int key = registers[Vx];
                 if ((opcode & 0x00FF) == 0x9E) {
                     if (keyboard.isPressed(key)) pc += 2;
-                } else if ((opcode & 0x00FF) == 0xA1){
+                } else if ((opcode & 0x00FF) == 0xA1) {
                     if (!keyboard.isPressed(key)) pc += 2;
                 } else handleUnknownOpcode();
             }
