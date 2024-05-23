@@ -19,10 +19,10 @@ public class OpcodeTranslator {
                         return "EXIT";
                     }
                     case 0x00FE -> {
-                        return "HIGH RES ON";
+                        return "HIGH RES OFF";
                     }
                     case 0x00FF -> {
-                        return "HIGH RES OFF";
+                        return "HIGH RES ON";
                     }
                     case 0x00FB -> {
                         return "SCROLL RIGHT";
