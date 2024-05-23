@@ -20,6 +20,9 @@ public class Launcher extends Application {
 
     //TODO: Add SCHIP-8 1.1 support
     //TODO: Pass quirks test for SCHIP-8 1.1
+    //TODO: Move speed selection to the main window
+    //TODO: Add a better way to set the speed
+    //TODO: vF should also increase by the number of lines clipped
     //TODO: Add XO-CHIP support
 
     private static Debugger debugger = null;
