@@ -335,6 +335,7 @@ public class ExecutionWorker extends Thread {
 
                     for (int row = 0; row < height; row++) {
                         int spriteOctet = memory[index + row];
+                        boolean collisionLine = false;
                         for (int col = 0; col < 8; col++) {
                             int spritePixel = spriteOctet & (0x80 >> col);
                             if (spritePixel != 0) {
@@ -343,13 +344,13 @@ public class ExecutionWorker extends Thread {
                                     boolean collision = video.drawChip8(xPos, col, yPos, row);
                                     if (collision) registers[0xF] = 1;
                                 } else if (Launcher.getHardware() == Hardware.SCHIP8) {
-                                    //fixme: (SCHIP & XO-CHIP) vF should be equals to the number of row that collides in high resolution mode
-                                    boolean collision = video.drawSchip8(xPos, col, yPos, row);
-                                    if (collision) registers[0xF]++;
+                                    collisionLine |= video.drawSchip8(xPos, col, yPos, row);
                                 }
                             }
                         }
+                        if (collisionLine && Launcher.getHardware() == Hardware.SCHIP8) registers[0xF]++;
                     }
+                    if (Launcher.getHardware() == Hardware.SCHIP8 && registers[0xF] > 0 && !video.isHighResolutionMode()) registers[0xF] = 1;
                 } else {
                     if (video.isHighResolutionMode()){
                         int Vx = (opcode & 0x0F00) >> 8;
@@ -362,15 +363,15 @@ public class ExecutionWorker extends Thread {
 
                         for (int row = 0; row < 16; row++) {
                             int spriteOctet = (memory[index + row * 2] << 8) + memory[index + row * 2 + 1];
+                            boolean collisionLine = false;
                             for (int col = 0; col < 16; col++) {
                                 int spritePixel = spriteOctet & (0x8000 >> col);
                                 if (spritePixel != 0) {
                                     if (xPos + col >= Screen.getWIDTH() || yPos + row >= Screen.getHEIGHT()) break;
-                                    //fixme: (SCHIP & XO-CHIP) vF should be equals to the number of row that collides in high resolution mode
-                                    boolean collision = video.drawSchip8(xPos, col, yPos, row);
-                                    if (collision) registers[0xF]++;
+                                    collisionLine |= video.drawSchip8(xPos, col, yPos, row);
                                 }
                             }
+                            if (collisionLine) registers[0xF]++;
                         }
                     }
                 }

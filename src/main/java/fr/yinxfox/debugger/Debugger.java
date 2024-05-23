@@ -199,7 +199,9 @@ public class Debugger extends Thread {
     private void updateMemory() {
         int pc = executionWorker.getPc();
         int j = 3;
+        int memorySize = executionWorker.getMemory().length;
         for (int i = pc - nbMemory; i <= pc + nbMemory; i += 2) {
+            if (i == memorySize || i - 1 == memorySize) break;
             memory.get(j).setText(String.format("%04X", i) + " " + String.format("%04X", (executionWorker.getMemory()[i] << 8) | executionWorker.getMemory()[i + 1]));
             j++;
         }
