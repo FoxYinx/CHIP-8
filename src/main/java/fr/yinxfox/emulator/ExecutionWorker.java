@@ -79,6 +79,7 @@ public class ExecutionWorker extends Thread {
         this.soundTimer = 0;
         this.opcode = 0x0000;
         System.arraycopy(FONTSET, 0, this.memory, FONTSET_START_ADDRESS, FONTSET_SIZE);
+        //fixme: That is probably wrong
         System.arraycopy(FONTSET_HIGHRES, 0, this.memory, FONTSET_HIGHRES_START_ADDRESS, FONTSET_HIGHRES_SIZE);
 
         byte[] data;
