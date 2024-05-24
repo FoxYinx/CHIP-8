@@ -22,7 +22,6 @@ public class Launcher extends Application {
     //TODO: Pass quirks test for SCHIP-8 1.1
     //TODO: Move speed selection to the main window
     //TODO: Add a better way to set the speed
-    //TODO: vF should also increase by the number of lines clipped
     //TODO: Add XO-CHIP support
 
     private static Debugger debugger = null;
@@ -184,9 +183,7 @@ public class Launcher extends Application {
         this.mainStage.setScene(mainScene);
         this.mainStage.show();
 
-        //fixme: should not always center the window
-
-        if (!System.getProperty("os.name").contains("Windows")) mainScene.getWindow().centerOnScreen();
+        if (!System.getProperty("os.name").contains("Windows") && System.getenv("XDG_SESSION_TYPE").contains("11")) mainScene.getWindow().centerOnScreen();
         this.mainStage.setTitle(hardware.toString());
     }
 
