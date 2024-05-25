@@ -23,6 +23,7 @@ public class Launcher extends Application {
     //TODO: Move speed selection to the main window
     //TODO: Add a better way to set the speed
     //TODO: Add XO-CHIP support
+    //TODO: Change JavaFX display to PixelBuffer (https://foojay.io/today/high-performance-rendering-in-javafx/)
 
     private static Debugger debugger = null;
     private static boolean isDebuggerEnabled = false;
