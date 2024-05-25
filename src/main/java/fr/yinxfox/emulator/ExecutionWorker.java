@@ -340,7 +340,6 @@ public class ExecutionWorker extends Thread {
                         for (int col = 0; col < 8; col++) {
                             int spritePixel = spriteOctet & (0x80 >> col);
                             if (spritePixel != 0) {
-                                if (xPos + col >= Screen.getWIDTH() || yPos + row >= Screen.getHEIGHT()) break;
                                 if (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) {
                                     boolean collision = video.drawChip8(xPos, col, yPos, row);
                                     if (collision) registers[0xF] = 1;
@@ -368,7 +367,6 @@ public class ExecutionWorker extends Thread {
                             for (int col = 0; col < 16; col++) {
                                 int spritePixel = spriteOctet & (0x8000 >> col);
                                 if (spritePixel != 0) {
-                                    if (xPos + col >= Screen.getWIDTH() || yPos + row >= Screen.getHEIGHT()) break;
                                     collisionLine |= video.drawSchip8(xPos, col, yPos, row);
                                 }
                             }

@@ -20,7 +20,6 @@ public class Launcher extends Application {
 
     //TODO: Add SCHIP-8 1.1 support
     //TODO: Pass quirks test for SCHIP-8 1.1
-    //TODO: Add a better way to set the speed
     //TODO: Add XO-CHIP support
     //TODO: Change JavaFX display to PixelBuffer (https://foojay.io/today/high-performance-rendering-in-javafx/)
 
@@ -98,6 +97,8 @@ public class Launcher extends Application {
             this.timeline.stop();
             if (this.executionWorker != null) this.executionWorker.interrupt();
             hardware = Hardware.CHIP8;
+            ExecutionWorker.setOPPS(500);
+            ((RadioMenuItem) menuBar.getMenus().filtered(menu -> menu.getText().equals("Speed")).getFirst().getItems().filtered(item -> item.getText().contains("500")).getFirst()).setSelected(true);
             if (debugger != null) debugger.updateStackDisplay();
             this.mainStage.setTitle(hardware.toString());
             Screen.updateScreenFormat();
@@ -108,6 +109,8 @@ public class Launcher extends Application {
             this.timeline.stop();
             if (this.executionWorker != null) this.executionWorker.interrupt();
             hardware = Hardware.CHIP8HIRES;
+            ExecutionWorker.setOPPS(500);
+            ((RadioMenuItem) menuBar.getMenus().filtered(menu -> menu.getText().equals("Speed")).getFirst().getItems().filtered(item -> item.getText().contains("500")).getFirst()).setSelected(true);
             if (debugger != null) debugger.updateStackDisplay();
             this.mainStage.setTitle(hardware.toString());
             Screen.updateScreenFormat();
@@ -118,6 +121,8 @@ public class Launcher extends Application {
             this.timeline.stop();
             if (this.executionWorker != null) this.executionWorker.interrupt();
             hardware = Hardware.SCHIP8;
+            ExecutionWorker.setOPPS(1000);
+            ((RadioMenuItem) menuBar.getMenus().filtered(menu -> menu.getText().equals("Speed")).getFirst().getItems().filtered(item -> item.getText().contains("1000")).getFirst()).setSelected(true);
             if (debugger != null) debugger.updateStackDisplay();
             this.mainStage.setTitle(hardware.toString());
             Screen.updateScreenFormat();

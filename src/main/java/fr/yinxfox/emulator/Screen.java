@@ -58,6 +58,7 @@ public class Screen extends Canvas {
     }
 
     public boolean drawChip8(int xPos, int col, int yPos, int row) {
+        if (xPos + col >= video.length || yPos + row >= video[0].length) return false;
         int screenPixel = video[xPos + col][yPos + row];
         video[xPos + col][yPos + row] ^= 1;
         return screenPixel == 1;
@@ -65,6 +66,7 @@ public class Screen extends Canvas {
 
     public boolean drawSchip8(int xPos, int col, int yPos, int row) {
         if (highResolutionMode) {
+            if (xPos + col >= video.length) return false;
             if (yPos + row >= video[0].length) return true;
             int screenPixel = video[xPos + col][yPos + row];
             video[xPos + col][yPos + row] ^= 1;
