@@ -147,8 +147,8 @@ public class ExecutionWorker extends Thread {
     public void updateTimers() {
         if (this.delayTimer > 0) --this.delayTimer;
         if (this.soundTimer > 0) {
-            --this.soundTimer;
             this.soundMaker.playBuzzer();
+            this.soundTimer--;
         } else this.soundMaker.stopBuzzer();
     }
 
@@ -329,8 +329,14 @@ public class ExecutionWorker extends Thread {
                     int Vy = (opcode & 0x00F0) >> 4;
                     int height = opcode & 0x000F;
 
-                    int xPos = registers[Vx] % Screen.getWIDTH();
-                    int yPos = registers[Vy] % Screen.getHEIGHT();
+                    int xPos, yPos;
+                    if (Launcher.getHardware() == Hardware.SCHIP8 && !video.isHighResolutionMode()) {
+                        xPos = registers[Vx] % (Screen.getWIDTH() / 2);
+                        yPos = registers[Vy] % (Screen.getHEIGHT() / 2);
+                    } else {
+                        xPos = registers[Vx] % Screen.getWIDTH();
+                        yPos = registers[Vy] % Screen.getHEIGHT();
+                    }
 
                     registers[0xF] = 0;
 

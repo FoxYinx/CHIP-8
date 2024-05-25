@@ -7,6 +7,8 @@ import java.nio.file.Paths;
 
 public class SoundMaker {
 
+    //fixme: sound is not being played if sound timer is too small
+
     private static final String URL = "src/main/resources/audio/";
 
     private final MediaPlayer mediaPlayer;

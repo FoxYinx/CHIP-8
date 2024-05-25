@@ -18,8 +18,6 @@ import java.io.File;
 
 public class Launcher extends Application {
 
-    //TODO: Add SCHIP-8 1.1 support
-    //TODO: Pass quirks test for SCHIP-8 1.1
     //TODO: Add XO-CHIP support
     //TODO: Change JavaFX display to PixelBuffer (https://foojay.io/today/high-performance-rendering-in-javafx/)
 
