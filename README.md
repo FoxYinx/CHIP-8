@@ -1,4 +1,4 @@
-# CHIP-8 emulator JAvA
+# CHIP-8 emulator Java
 This is my implementation of a CHIP-8 emulator using JavaFx.
 
 ## Requirements
