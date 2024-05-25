@@ -12,7 +12,7 @@ public class SoundMaker {
     private final MediaPlayer mediaPlayer;
 
     public SoundMaker() {
-        Media media = new Media(Paths.get(URL + "buzzer.mp3").toUri().toString());
+        Media media = new Media(Paths.get(URL + "beep.mp3").toUri().toString());
         this.mediaPlayer = new MediaPlayer(media);
         this.mediaPlayer.setVolume(0.2);
     }

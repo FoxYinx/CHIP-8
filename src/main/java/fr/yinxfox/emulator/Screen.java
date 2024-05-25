@@ -103,7 +103,7 @@ public class Screen extends Canvas {
         for (int i = gap; i < WIDTH; i++) {
             video[i - gap] = video[i];
         }
-        for (int i = WIDTH - gap - 1; i < WIDTH; i++) {
+        for (int i = WIDTH - gap; i < WIDTH; i++) {
             video[i] = new int[HEIGHT];
         }
     }
