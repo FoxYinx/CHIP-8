@@ -20,7 +20,6 @@ public class Launcher extends Application {
 
     //TODO: Add SCHIP-8 1.1 support
     //TODO: Pass quirks test for SCHIP-8 1.1
-    //TODO: Move speed selection to the main window
     //TODO: Add a better way to set the speed
     //TODO: Add XO-CHIP support
     //TODO: Change JavaFX display to PixelBuffer (https://foojay.io/today/high-performance-rendering-in-javafx/)
@@ -143,6 +142,25 @@ public class Launcher extends Application {
         RadioMenuItem unlockedItem = new RadioMenuItem("Unlocked");
         unlockedItem.setOnAction(_ -> ExecutionWorker.UNLOCKED = !ExecutionWorker.UNLOCKED);
         menuSpeed.getItems().add(unlockedItem);
+
+        ToggleGroup speedGroup = new ToggleGroup();
+        RadioMenuItem tenItem = new RadioMenuItem("10");
+        tenItem.setOnAction(_ -> ExecutionWorker.setOPPS(10));
+        menuSpeed.getItems().add(tenItem);
+        RadioMenuItem hundredItem = new RadioMenuItem("100");
+        hundredItem.setOnAction(_ -> ExecutionWorker.setOPPS(100));
+        menuSpeed.getItems().add(hundredItem);
+        RadioMenuItem fiveHundredItem = new RadioMenuItem("500");
+        fiveHundredItem.setSelected(true);
+        fiveHundredItem.setOnAction(_ -> ExecutionWorker.setOPPS(500));
+        menuSpeed.getItems().add(fiveHundredItem);
+        RadioMenuItem thousandItem = new RadioMenuItem("1000");
+        thousandItem.setOnAction(_ -> ExecutionWorker.setOPPS(1000));
+        menuSpeed.getItems().add(thousandItem);
+        tenItem.setToggleGroup(speedGroup);
+        hundredItem.setToggleGroup(speedGroup);
+        fiveHundredItem.setToggleGroup(speedGroup);
+        thousandItem.setToggleGroup(speedGroup);
 
         Menu menuDebug = new Menu("Debug");
         RadioMenuItem enableDebugger = new RadioMenuItem("Debugger");

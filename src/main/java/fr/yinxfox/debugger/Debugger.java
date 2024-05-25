@@ -113,25 +113,6 @@ public class Debugger extends Thread {
 
     private void createMenuBar() {
         menuBar = new MenuBar();
-        ToggleGroup speedGroup = new ToggleGroup();
-        Menu menuSpeed = new Menu("Speed (OPPS)");
-        RadioMenuItem tenItem = new RadioMenuItem("10");
-        tenItem.setOnAction(_ -> ExecutionWorker.setOPPS(10));
-        menuSpeed.getItems().add(tenItem);
-        RadioMenuItem hundredItem = new RadioMenuItem("100");
-        hundredItem.setOnAction(_ -> ExecutionWorker.setOPPS(100));
-        menuSpeed.getItems().add(hundredItem);
-        RadioMenuItem fiveHundredItem = new RadioMenuItem("500");
-        fiveHundredItem.setSelected(true);
-        fiveHundredItem.setOnAction(_ -> ExecutionWorker.setOPPS(500));
-        menuSpeed.getItems().add(fiveHundredItem);
-        RadioMenuItem thousandItem = new RadioMenuItem("1000");
-        thousandItem.setOnAction(_ -> ExecutionWorker.setOPPS(1000));
-        menuSpeed.getItems().add(thousandItem);
-        tenItem.setToggleGroup(speedGroup);
-        hundredItem.setToggleGroup(speedGroup);
-        fiveHundredItem.setToggleGroup(speedGroup);
-        thousandItem.setToggleGroup(speedGroup);
 
         Menu controlMenu = new Menu("Control");
         RadioMenuItem pauseItem = new RadioMenuItem("Pause");
@@ -156,7 +137,6 @@ public class Debugger extends Thread {
         controlMenu.getItems().add(pauseItem);
         controlMenu.getItems().add(stepItem);
 
-        menuBar.getMenus().add(menuSpeed);
         menuBar.getMenus().add(controlMenu);
     }
 
