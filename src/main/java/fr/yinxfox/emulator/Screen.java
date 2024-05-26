@@ -54,9 +54,9 @@ public class Screen extends Canvas {
                     if (plane1[x][y] == 0 && plane2[x][y] == 0) {
                         graphicsContext.setFill(Color.BLACK);
                     } else if (plane1[x][y] == 1 && plane2[x][y] == 0) {
-                        graphicsContext.setFill(Color.GREY);
+                        graphicsContext.setFill(Color.BLUE);
                     } else if (plane1[x][y] == 0 && plane2[x][y] == 1) {
-                        graphicsContext.setFill(Color.LIGHTGRAY);
+                        graphicsContext.setFill(Color.GREEN);
                     } else {
                         graphicsContext.setFill(Color.WHITE);
                     }
@@ -173,12 +173,18 @@ public class Screen extends Canvas {
     }
 
     public void disableHighResolutionMode() {
+        int mem = selectedPlane;
+        selectedPlane = 3;
         if (Launcher.getHardware() == Hardware.XOCHIP) clear();
+        selectedPlane = mem;
         highResolutionMode = false;
     }
 
     public void enableHighResolutionMode() {
+        int mem = selectedPlane;
+        selectedPlane = 3;
         if (Launcher.getHardware() == Hardware.XOCHIP) clear();
+        selectedPlane = mem;
         highResolutionMode = true;
     }
 

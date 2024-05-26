@@ -12,11 +12,13 @@ public class SoundMaker {
     private static final String URL = "src/main/resources/audio/";
 
     private final MediaPlayer mediaPlayer;
+    private int pitch;
 
     public SoundMaker() {
         Media media = new Media(Paths.get(URL + "beep.mp3").toUri().toString());
         this.mediaPlayer = new MediaPlayer(media);
         this.mediaPlayer.setVolume(0.2);
+        this.pitch = 64;
     }
 
     public void playBuzzer() {
@@ -27,4 +29,7 @@ public class SoundMaker {
         this.mediaPlayer.stop();
     }
 
+    public void setPitch(int pitch) {
+        this.pitch = pitch;
+    }
 }

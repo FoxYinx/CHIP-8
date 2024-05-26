@@ -5,6 +5,8 @@ import fr.yinxfox.emulator.Hardware;
 
 public class OpcodeTranslator {
 
+    //TODO: update translator to reflect the added of opcodes of XO-CHIP
+
     public static String decodeOp(int opcode) {
         switch (opcode >> 12) {
             case 0x0 -> {

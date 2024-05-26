@@ -74,7 +74,7 @@ public class ExecutionWorker extends Thread {
         this.index = 0;
         this.pc = 0x0200;
         this.stack = (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) ? new int[12] : new int[16];
-        this.rpl = new int[8];
+        this.rpl = (Launcher.getHardware() == Hardware.XOCHIP) ? new int[16] : new int[8];
         this.sp = 0;
         this.delayTimer = 0;
         this.soundTimer = 0;
@@ -107,7 +107,7 @@ public class ExecutionWorker extends Thread {
         this.index = 0;
         this.pc = 0x0200;
         this.stack = (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) ? new int[12] :  new int[16];
-        this.rpl = new int[8];
+        this.rpl = (Launcher.getHardware() == Hardware.XOCHIP) ? new int[16] : new int[8];
         this.sp = 0;
         this.delayTimer = 0;
         this.soundTimer = 0;
@@ -186,6 +186,9 @@ public class ExecutionWorker extends Thread {
                     video.disableHighResolutionMode();
                 } else if (opcode == 0x00FF) {
                     video.enableHighResolutionMode();
+                } else if ((opcode & 0xFFF0) == 0x00D0) {
+                    int N = opcode & 0x000F;
+                    System.out.println("Scroll up by " + N + " pixels");
                 } else if ((opcode & 0xFFF0) == 0x00C0) {
                     int N = opcode & 0x000F;
                     video.scrollDown(N);
@@ -219,6 +222,22 @@ public class ExecutionWorker extends Thread {
                     int Vx = (opcode & 0x0F00) >> 8;
                     int Vy = (opcode & 0x00F0) >> 4;
                     if (registers[Vx] == registers[Vy]) pc += 2;
+                } else if ((opcode & 0x000F) == 2) {
+                    int Vx = (opcode & 0x0F00) >> 8;
+                    int Vy = (opcode & 0x00F0) >> 4;
+                    int j = 0;
+                    for (int i = Vx; i <= Vy; i++) {
+                        memory[index + j] = registers[Vx + j];
+                        j++;
+                    }
+                } else if ((opcode & 0x000F) == 3) {
+                    int Vx = (opcode & 0x0F00) >> 8;
+                    int Vy = (opcode & 0x00F0) >> 4;
+                    int j = 0;
+                    for (int i = Vx; i <= Vy; i++) {
+                        registers[Vx + j] = memory[index + j];
+                        j++;
+                    }
                 } else handleUnknownOpcode();
             }
             case 0x6 -> {
@@ -392,9 +411,16 @@ public class ExecutionWorker extends Thread {
             }
             case 0xF -> {
                 switch (opcode & 0x00FF) {
+                    case 0x00 -> {
+                        index = (memory[pc] << 8) | memory[pc + 1];
+                        pc += 2;
+                    }
                     case 0x01 -> {
                         int N = (opcode & 0x0F00) >> 8;
                         video.setSelectedPlane(N);
+                    }
+                    case 0x02 -> {
+                        System.out.println("Store 16 bytes in audio pattern buffer");
                     }
                     case 0x07 -> {
                         int Vx = (opcode & 0x0F00) >> 8;
@@ -444,6 +470,10 @@ public class ExecutionWorker extends Thread {
                         memory[index + 1] = value % 10;
                         value /= 10;
                         memory[index] = value % 10;
+                    }
+                    case 0x3A -> {
+                        int Vx = (opcode & 0x0F00) >> 8;
+                        soundMaker.setPitch(registers[Vx]);
                     }
                     case 0x55 -> {
                         int Vx = (opcode & 0x0F00) >> 8;
