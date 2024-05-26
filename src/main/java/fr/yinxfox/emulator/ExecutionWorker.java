@@ -70,10 +70,10 @@ public class ExecutionWorker extends Thread {
 
     public ExecutionWorker(String filename) {
         this.registers = new int[16];
-        this.memory = new int[4096];
+        this.memory = (Launcher.getHardware() == Hardware.XOCHIP ) ? new int[65536] : new int[4096];
         this.index = 0;
         this.pc = 0x0200;
-        this.stack = (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) ? new int[12] :  new int[16];
+        this.stack = (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) ? new int[12] : new int[16];
         this.rpl = new int[8];
         this.sp = 0;
         this.delayTimer = 0;
@@ -103,7 +103,7 @@ public class ExecutionWorker extends Thread {
 
     public ExecutionWorker(String filename, Screen video, Keyboard keyboard, SoundMaker soundMaker) {
         this.registers = new int[16];
-        this.memory = new int[4096];
+        this.memory = (Launcher.getHardware() == Hardware.XOCHIP ) ? new int[65536] : new int[4096];
         this.index = 0;
         this.pc = 0x0200;
         this.stack = (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) ? new int[12] :  new int[16];
@@ -330,7 +330,7 @@ public class ExecutionWorker extends Thread {
                     int height = opcode & 0x000F;
 
                     int xPos, yPos;
-                    if (Launcher.getHardware() == Hardware.SCHIP8 && !video.isHighResolutionMode()) {
+                    if ((Launcher.getHardware() == Hardware.SCHIP8 || Launcher.getHardware() == Hardware.XOCHIP) && !video.isHighResolutionMode()) {
                         xPos = registers[Vx] % (Screen.getWIDTH() / 2);
                         yPos = registers[Vy] % (Screen.getHEIGHT() / 2);
                     } else {
@@ -349,14 +349,14 @@ public class ExecutionWorker extends Thread {
                                 if (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) {
                                     boolean collision = video.drawChip8(xPos, col, yPos, row);
                                     if (collision) registers[0xF] = 1;
-                                } else if (Launcher.getHardware() == Hardware.SCHIP8) {
+                                } else {
                                     collisionLine |= video.drawSchip8(xPos, col, yPos, row);
                                 }
                             }
                         }
-                        if (collisionLine && Launcher.getHardware() == Hardware.SCHIP8) registers[0xF]++;
+                        if (collisionLine && (Launcher.getHardware() == Hardware.SCHIP8 || Launcher.getHardware() == Hardware.XOCHIP)) registers[0xF]++;
                     }
-                    if (Launcher.getHardware() == Hardware.SCHIP8 && registers[0xF] > 0 && !video.isHighResolutionMode()) registers[0xF] = 1;
+                    if ((Launcher.getHardware() == Hardware.SCHIP8 || Launcher.getHardware() == Hardware.XOCHIP) && registers[0xF] > 0 && !video.isHighResolutionMode()) registers[0xF] = 1;
                 } else {
                     if (video.isHighResolutionMode()){
                         int Vx = (opcode & 0x0F00) >> 8;
