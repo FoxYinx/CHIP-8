@@ -91,46 +91,13 @@ public class Launcher extends Application {
         Menu menuHardware = new Menu("Hardware");
         RadioMenuItem chip8Item = new RadioMenuItem(Hardware.CHIP8.toString());
         chip8Item.setSelected(true);
-        chip8Item.setOnAction(_ -> {
-            this.timeline.stop();
-            if (this.executionWorker != null) this.executionWorker.interrupt();
-            hardware = Hardware.CHIP8;
-            ExecutionWorker.setOPPS(500);
-            ((RadioMenuItem) menuBar.getMenus().filtered(menu -> menu.getText().equals("Speed")).getFirst().getItems().filtered(item -> item.getText().contains("500")).getFirst()).setSelected(true);
-            if (debugger != null) debugger.updateStackDisplay();
-            this.mainStage.setTitle(hardware.toString());
-            Screen.updateScreenFormat();
-            this.initializeStage();
-        });
+        chip8Item.setOnAction(_ -> changeHardware(Hardware.CHIP8));
         RadioMenuItem chip8HiresItem = new RadioMenuItem(Hardware.CHIP8HIRES.toString());
-        chip8HiresItem.setOnAction(_ -> {
-            this.timeline.stop();
-            if (this.executionWorker != null) this.executionWorker.interrupt();
-            hardware = Hardware.CHIP8HIRES;
-            ExecutionWorker.setOPPS(500);
-            ((RadioMenuItem) menuBar.getMenus().filtered(menu -> menu.getText().equals("Speed")).getFirst().getItems().filtered(item -> item.getText().contains("500")).getFirst()).setSelected(true);
-            if (debugger != null) debugger.updateStackDisplay();
-            this.mainStage.setTitle(hardware.toString());
-            Screen.updateScreenFormat();
-            this.initializeStage();
-        });
+        chip8HiresItem.setOnAction(_ -> changeHardware(Hardware.CHIP8HIRES));
         RadioMenuItem schip8Item = new RadioMenuItem(Hardware.SCHIP8.toString());
-        schip8Item.setOnAction(_ -> {
-            this.timeline.stop();
-            if (this.executionWorker != null) this.executionWorker.interrupt();
-            hardware = Hardware.SCHIP8;
-            ExecutionWorker.setOPPS(1000);
-            ((RadioMenuItem) menuBar.getMenus().filtered(menu -> menu.getText().equals("Speed")).getFirst().getItems().filtered(item -> item.getText().contains("1000")).getFirst()).setSelected(true);
-            if (debugger != null) debugger.updateStackDisplay();
-            this.mainStage.setTitle(hardware.toString());
-            Screen.updateScreenFormat();
-            this.initializeStage();
-        });
+        schip8Item.setOnAction(_ -> changeHardware(Hardware.SCHIP8));
         RadioMenuItem xochipItem = new RadioMenuItem(Hardware.XOCHIP.toString());
-        xochipItem.setOnAction(_ -> {
-            hardware = Hardware.XOCHIP;
-            this.mainStage.setTitle(hardware.toString());
-        });
+        xochipItem.setOnAction(_ -> changeHardware(Hardware.XOCHIP));
         chip8Item.setToggleGroup(hardwareGroup);
         chip8HiresItem.setToggleGroup(hardwareGroup);
         schip8Item.setToggleGroup(hardwareGroup);
@@ -174,6 +141,18 @@ public class Launcher extends Application {
         menuBar.getMenus().add(menuHardware);
         menuBar.getMenus().add(menuSpeed);
         menuBar.getMenus().add(menuDebug);
+    }
+
+    private void changeHardware(Hardware hd) {
+        this.timeline.stop();
+        if (this.executionWorker != null) this.executionWorker.interrupt();
+        hardware = hd;
+        ExecutionWorker.setOPPS(hd.getSpeed());
+        ((RadioMenuItem) menuBar.getMenus().filtered(menu -> menu.getText().equals("Speed")).getFirst().getItems().filtered(item -> item.getText().contains(String.valueOf(hd.getSpeed()))).getFirst()).setSelected(true);
+        if (debugger != null) debugger.updateStackDisplay();
+        this.mainStage.setTitle(hardware.toString());
+        Screen.updateScreenFormat();
+        this.initializeStage();
     }
 
     private void initializeStage() {
