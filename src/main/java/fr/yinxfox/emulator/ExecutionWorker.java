@@ -392,6 +392,10 @@ public class ExecutionWorker extends Thread {
             }
             case 0xF -> {
                 switch (opcode & 0x00FF) {
+                    case 0x01 -> {
+                        int N = (opcode & 0x0F00) >> 8;
+                        video.setSelectedPlane(N);
+                    }
                     case 0x07 -> {
                         int Vx = (opcode & 0x0F00) >> 8;
                         registers[Vx] = delayTimer;
