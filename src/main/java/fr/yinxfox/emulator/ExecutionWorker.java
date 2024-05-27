@@ -328,13 +328,13 @@ public class ExecutionWorker extends Thread {
             }
             case 0xA -> index = opcode & 0x0FFF;
             case 0xB -> {
-                if (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) {
-                    int address = opcode & 0x0FFF;
-                    pc = registers[0] + address;
-                } else if (Launcher.getHardware() == Hardware.SCHIP8) {
+                if (Launcher.getHardware() == Hardware.SCHIP8) {
                     int Vx = (opcode & 0x0F00) >> 8;
                     int address = opcode & 0x0FFF;
                     pc = registers[Vx] + address;
+                } else {
+                    int address = opcode & 0x0FFF;
+                    pc = registers[0] + address;
                 }
             }
             case 0xC -> {
