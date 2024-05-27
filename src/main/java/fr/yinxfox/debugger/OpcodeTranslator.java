@@ -130,10 +130,7 @@ public class OpcodeTranslator {
             }
             case 0xF -> {
                 switch (opcode & 0x00FF) {
-                    //fixme: improve this translation
-                    case 0x00 -> {
-                        return "I := LONG NNN";
-                    }
+                    // case 0x00 is handled directly in the debugger
                     case 0x01 -> {
                         return "PLANE " + String.format("%01X", (opcode & 0x0F00) >> 8);
                     }

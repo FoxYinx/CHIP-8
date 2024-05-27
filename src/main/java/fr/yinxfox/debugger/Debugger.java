@@ -194,7 +194,13 @@ public class Debugger extends Thread {
             if (i == pc - 2) opcodes.get(j - 1).setBackground(Background.EMPTY);
             if (i == pc) opcodes.get(j - 1).setBackground(Background.fill(Color.GREEN));
             if (i == pc + 2) opcodes.get(j - 1).setBackground(Background.fill(Color.YELLOW));
-            opcodes.get(j).setText(OpcodeTranslator.decodeOp((executionWorker.getMemory()[i] << 8) | executionWorker.getMemory()[i + 1]));
+            if (((executionWorker.getMemory()[i - 2] << 8) | executionWorker.getMemory()[i - 1]) == 0xF000) {
+                opcodes.get(j).setText("");
+            } else if (((executionWorker.getMemory()[i] << 8) | executionWorker.getMemory()[i + 1]) == 0xF000) {
+                opcodes.get(j).setText("I := LONG " + String.format("%04X", (executionWorker.getMemory()[i + 2] << 8) | executionWorker.getMemory()[i + 3]));
+            } else {
+                opcodes.get(j).setText(OpcodeTranslator.decodeOp((executionWorker.getMemory()[i] << 8) | executionWorker.getMemory()[i + 1]));
+            }
             j++;
         }
     }
