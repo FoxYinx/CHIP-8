@@ -28,12 +28,8 @@ public class Screen extends Canvas {
     }
 
     public void clear() {
-        for (int x = 0; x < WIDTH; x++) {
-            for (int y = 0; y < HEIGHT; y++) {
-                if ((selectedPlane & 1) == 1) plane1[x][y] = 0;
-                if ((selectedPlane & 2) == 2) plane2[x][y] = 0;
-            }
-        }
+        if ((selectedPlane & 1) == 1) plane1 = new int[WIDTH][HEIGHT];
+        if ((selectedPlane & 2) == 2) plane2 = new int[WIDTH][HEIGHT];
     }
 
     public void render() {

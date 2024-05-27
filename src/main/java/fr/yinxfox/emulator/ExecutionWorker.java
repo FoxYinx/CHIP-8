@@ -210,18 +210,36 @@ public class ExecutionWorker extends Thread {
             case 0x3 -> {
                 int Vx = (opcode & 0x0F00) >> 8;
                 int octet = opcode & 0x00FF;
-                if (registers[Vx] == octet) pc += 2;
+                if (registers[Vx] == octet) {
+                    if (((memory[pc] << 8) | memory[pc + 1]) == 0xF000) {
+                        pc += 4;
+                    } else {
+                        pc += 2;
+                    }
+                }
             }
             case 0x4 -> {
                 int Vx = (opcode & 0x0F00) >> 8;
                 int octet = opcode & 0x00FF;
-                if (registers[Vx] != octet) pc += 2;
+                if (registers[Vx] != octet) {
+                    if (((memory[pc] << 8) | memory[pc + 1]) == 0xF000) {
+                        pc += 4;
+                    } else {
+                        pc += 2;
+                    }
+                }
             }
             case 0x5 -> {
                 if ((opcode & 0x000F) == 0) {
                     int Vx = (opcode & 0x0F00) >> 8;
                     int Vy = (opcode & 0x00F0) >> 4;
-                    if (registers[Vx] == registers[Vy]) pc += 2;
+                    if (registers[Vx] == registers[Vy]) {
+                        if (((memory[pc] << 8) | memory[pc + 1]) == 0xF000) {
+                            pc += 4;
+                        } else {
+                            pc += 2;
+                        }
+                    }
                 } else if ((opcode & 0x000F) == 2) {
                     int Vx = (opcode & 0x0F00) >> 8;
                     int Vy = (opcode & 0x00F0) >> 4;
@@ -337,7 +355,13 @@ public class ExecutionWorker extends Thread {
                 if ((opcode & 0x000F) == 0) {
                     int Vx = (opcode & 0x0F00) >> 8;
                     int Vy = (opcode & 0x00F0) >> 4;
-                    if (registers[Vx] != registers[Vy]) pc += 2;
+                    if (registers[Vx] != registers[Vy]) {
+                        if (((memory[pc] << 8) | memory[pc + 1]) == 0xF000) {
+                            pc += 4;
+                        } else {
+                            pc += 2;
+                        }
+                    }
                 } else handleUnknownOpcode();
             }
             case 0xA -> index = opcode & 0x0FFF;
@@ -418,9 +442,21 @@ public class ExecutionWorker extends Thread {
                 int Vx = (opcode & 0x0F00) >> 8;
                 int key = registers[Vx];
                 if ((opcode & 0x00FF) == 0x9E) {
-                    if (keyboard.isPressed(key)) pc += 2;
+                    if (keyboard.isPressed(key)) {
+                        if (((memory[pc] << 8) | memory[pc + 1]) == 0xF000) {
+                            pc += 4;
+                        } else {
+                            pc += 2;
+                        }
+                    }
                 } else if ((opcode & 0x00FF) == 0xA1) {
-                    if (!keyboard.isPressed(key)) pc += 2;
+                    if (!keyboard.isPressed(key)) {
+                        if (((memory[pc] << 8) | memory[pc + 1]) == 0xF000) {
+                            pc += 4;
+                        } else {
+                            pc += 2;
+                        }
+                    }
                 } else handleUnknownOpcode();
             }
             case 0xF -> {
