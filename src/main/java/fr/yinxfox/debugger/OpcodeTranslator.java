@@ -5,8 +5,6 @@ import fr.yinxfox.emulator.Hardware;
 
 public class OpcodeTranslator {
 
-    //TODO: update translator to reflect the added of opcodes of XO-CHIP
-
     public static String decodeOp(int opcode) {
         switch (opcode >> 12) {
             case 0x0 -> {
@@ -21,19 +19,20 @@ public class OpcodeTranslator {
                         return "EXIT";
                     }
                     case 0x00FE -> {
-                        return "HIGH RES OFF";
+                        return "LORES";
                     }
                     case 0x00FF -> {
-                        return "HIGH RES ON";
+                        return "HIRES";
                     }
                     case 0x00FB -> {
-                        return "SCROLL RIGHT";
+                        return "SCROLL-RIGHT";
                     }
                     case 0x00FC -> {
-                        return "SCROLL LEFT";
+                        return "SCROLL-LEFT";
                     }
                     default -> {
-                        if ((opcode & 0xFFF0) == 0x00C0) return "SCROLL DOWN " + (opcode & 0x000F);
+                        if ((opcode & 0xFFF0) == 0x00C0) return "SCROLL-DOWN " + (opcode & 0x000F);
+                        if ((opcode & 0xFFF0) == 0x00D0) return "SCROLL-UP " + (opcode & 0x000F);
                     }
                 }
             }
@@ -41,110 +40,132 @@ public class OpcodeTranslator {
                 return "JUMP " + String.format("%03X", opcode & 0x0FFF);
             }
             case 0x2 -> {
-                return "FUNC " + String.format("%03X", opcode & 0x0FFF);
+                return ":CALL " + String.format("%03X", opcode & 0x0FFF);
             }
             case 0x3 -> {
-                return "SKIP v" + String.format("%01X", (opcode & 0x0F00) >> 8) + "==" + String.format("%02X", opcode & 0x00FF);
+                return "IF v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " != " + String.format("%02X", opcode & 0x00FF) + " THEN";
             }
             case 0x4 -> {
-                return "SKIP v" + String.format("%01X", (opcode & 0x0F00) >> 8) + "!=" + String.format("%02X", opcode & 0x00FF);
+                return "IF v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " == " + String.format("%02X", opcode & 0x00FF) + " THEN";
             }
             case 0x5 -> {
-                return "SKIP v" + String.format("%01X", (opcode & 0x0F00) >> 8) + "==v" + String.format("%01X", (opcode & 0x00F0) >> 4);
+                switch (opcode & 0xF) {
+                    case 0 -> {
+                        return "IF v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " != v" + String.format("%01X", (opcode & 0x00F0) >> 4) + " THEN";
+                    }
+                    case 2 -> {
+                        return "SAVE v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " - v" + String.format("%01X", (opcode & 0x00F0) >> 4);
+                    }
+                    case 3 -> {
+                        return "LOAD v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " - v" + String.format("%01X", (opcode & 0x00F0) >> 4);
+                    }
+                }
             }
             case 0x6 -> {
-                return "SET v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " " + String.format("%02X", opcode & 0x00FF);
+                return "v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " := " + String.format("%02X", opcode & 0x00FF);
             }
             case 0x7 -> {
-                return "ADD v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " " + String.format("%02X", opcode & 0x00FF);
+                return "v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " += " + String.format("%02X", opcode & 0x00FF);
             }
             case 0x8 -> {
                 switch (opcode & 0x000F) {
                     case 0x0 -> {
-                        return "SET v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " v" + String.format("%01X", (opcode & 0x00F0) >> 4);
+                        return "v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " := v" + String.format("%01X", (opcode & 0x00F0) >> 4);
                     }
                     case 0x1 -> {
-                        return "OR v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " v" + String.format("%01X", (opcode & 0x00F0) >> 4);
+                        return "v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " |= v" + String.format("%01X", (opcode & 0x00F0) >> 4);
                     }
                     case 0x2 -> {
-                        return "AND v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " v" + String.format("%01X", (opcode & 0x00F0) >> 4);
+                        return "v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " &= v" + String.format("%01X", (opcode & 0x00F0) >> 4);
                     }
                     case 0x3 -> {
-                        return "XOR v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " v" + String.format("%01X", (opcode & 0x00F0) >> 4);
+                        return "v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " ^= v" + String.format("%01X", (opcode & 0x00F0) >> 4);
                     }
                     case 0x4 -> {
-                        return "ADD v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " v" + String.format("%01X", (opcode & 0x00F0) >> 4);
+                        return "v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " += v" + String.format("%01X", (opcode & 0x00F0) >> 4);
                     }
                     case 0x5 -> {
-                        return "SUB v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " v" + String.format("%01X", (opcode & 0x00F0) >> 4);
+                        return "v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " -= v" + String.format("%01X", (opcode & 0x00F0) >> 4);
                     }
                     case 0x6 -> {
-                        return "LSR v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " v" + String.format("%01X", (opcode & 0x00F0) >> 4);
+                        return "v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " >>= v" + String.format("%01X", (opcode & 0x00F0) >> 4);
                     }
                     case 0x7 -> {
-                        return "SUB v" + String.format("%01X", (opcode & 0x00F0) >> 4) + " v" + String.format("%01X", (opcode & 0x0F00) >> 8);
+                        return "v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " =- v" + String.format("%01X", (opcode & 0x00F0) >> 4);
                     }
                     case 0xE -> {
-                        return "LSL v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " v" + String.format("%01X", (opcode & 0x00F0) >> 4);
+                        return "v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " <<= v" + String.format("%01X", (opcode & 0x00F0) >> 4);
                     }
                 }
             }
             case 0x9 -> {
-                return "SKIP v" + String.format("%01X", (opcode & 0x0F00) >> 8) + "!=v" + String.format("%01X", (opcode & 0x00F0) >> 4);
+                return "IF v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " == v" + String.format("%01X", (opcode & 0x00F0) >> 4) + " THEN";
             }
             case 0xA -> {
-                return "SET I " + String.format("%03X", opcode & 0x0FFF);
+                return "I := " + String.format("%03X", opcode & 0x0FFF);
             }
             case 0xB -> {
-                if (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) {
-                    return "JUMP " + String.format("%03X", opcode & 0x0FFF) + " v0";
+                if (Launcher.getHardware() != Hardware.SCHIP8) {
+                    return "JUMP0 " + String.format("%03X", opcode & 0x0FFF);
                 } else {
-                    return "JUMP " + String.format("%02X", opcode & 0x00FF) + " v" + String.format("%01X", (opcode & 0x0F00) >> 8);
+                    return "JUMP " + String.format("%02X", opcode & 0x00FF) + " + v" + String.format("%01X", (opcode & 0x0F00) >> 8);
                 }
             }
-
             case 0xC -> {
-                return "SET v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " rand " + String.format("%02X", opcode & 0x00FF);
+                return "v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " := random " + String.format("%02X", opcode & 0x00FF);
             }
             case 0xD -> {
                 if ((opcode & 0x000F) != 0) {
-                    return "DRAW v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " v" + String.format("%01X", (opcode & 0x00F0) >> 4) + " " + String.format("%01X", opcode & 0x000F);
+                    return "SPRITE v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " v" + String.format("%01X", (opcode & 0x00F0) >> 4) + " " + String.format("%01X", opcode & 0x000F);
                 } else {
-                    return "DRAW v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " v" + String.format("%01X", (opcode & 0x00F0) >> 4) + " 16";
+                    return "SPRITE v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " v" + String.format("%01X", (opcode & 0x00F0) >> 4) + " 0";
                 }
             }
             case 0xE -> {
                 if ((opcode & 0x00FF) == 0x9E) {
-                    return "SKIP v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " PRSD";
+                    return "IF v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " -KEY THEN";
                 } else if ((opcode & 0x00FF) == 0xA1) {
-                    return "SKIP v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " NPRSD";
+                    return "IF v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " KEY THEN";
                 }
             }
             case 0xF -> {
                 switch (opcode & 0x00FF) {
+                    //fixme: improve this translation
+                    case 0x00 -> {
+                        return "I := LONG NNN";
+                    }
+                    case 0x01 -> {
+                        return "PLANE " + String.format("%01X", (opcode & 0x0F00) >> 8);
+                    }
+                    case 0x02 -> {
+                        return "AUDIO";
+                    }
                     case 0x07 -> {
-                        return "SET v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " DT";
+                        return "v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " := DELAY";
                     }
                     case 0x0A -> {
-                        return "SET v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " KEY";
+                        return "v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " := KEY";
                     }
                     case 0x15 -> {
-                        return "SET DT v" + String.format("%01X", (opcode & 0x0F00) >> 8);
+                        return "DELAY := v" + String.format("%01X", (opcode & 0x0F00) >> 8);
                     }
                     case 0x18 -> {
-                        return "SET ST v" + String.format("%01X", (opcode & 0x0F00) >> 8);
+                        return "BUZZER := v" + String.format("%01X", (opcode & 0x0F00) >> 8);
                     }
                     case 0x1E -> {
-                        return "ADD I v" + String.format("%01X", (opcode & 0x0F00) >> 8);
+                        return "I += v" + String.format("%01X", (opcode & 0x0F00) >> 8);
                     }
                     case 0x29 -> {
-                        return "SET I v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " FONT";
+                        return "I := hex v" + String.format("%01X", (opcode & 0x0F00) >> 8);
                     }
                     case 0x30 -> {
-                        return "SET I v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " FONT H";
+                        return "I := bighex v" + String.format("%01X", (opcode & 0x0F00) >> 8);
                     }
                     case 0x33 -> {
                         return "BCD v" + String.format("%01X", (opcode & 0x0F00) >> 8);
+                    }
+                    case 0x3A -> {
+                        return "PITCH := v" + String.format("%01X", (opcode & 0x0F00) >> 8);
                     }
                     case 0x55 -> {
                         return "SAVE v" + String.format("%01X", (opcode & 0x0F00) >> 8);
@@ -153,10 +174,10 @@ public class OpcodeTranslator {
                         return "LOAD v" + String.format("%01X", (opcode & 0x0F00) >> 8);
                     }
                     case 0x75 -> {
-                        return "SAVE rpl v" + String.format("%01X", (opcode & 0x0F00) >> 8);
+                        return "SAVEFLAGS v" + String.format("%01X", (opcode & 0x0F00) >> 8);
                     }
                     case 0x85 -> {
-                        return "LOAD rpl v" + String.format("%01X", (opcode & 0x0F00) >> 8);
+                        return "SAVEFLAGS rpl v" + String.format("%01X", (opcode & 0x0F00) >> 8);
                     }
                 }
             }

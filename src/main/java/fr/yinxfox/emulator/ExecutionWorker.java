@@ -218,7 +218,6 @@ public class ExecutionWorker extends Thread {
                 if (registers[Vx] != octet) pc += 2;
             }
             case 0x5 -> {
-                //fixme: the order of Vx and Vy must be ignored
                 if ((opcode & 0x000F) == 0) {
                     int Vx = (opcode & 0x0F00) >> 8;
                     int Vy = (opcode & 0x00F0) >> 4;
@@ -227,17 +226,31 @@ public class ExecutionWorker extends Thread {
                     int Vx = (opcode & 0x0F00) >> 8;
                     int Vy = (opcode & 0x00F0) >> 4;
                     int j = 0;
-                    for (int i = Vx; i <= Vy; i++) {
-                        memory[index + j] = registers[Vx + j];
-                        j++;
+                    if (Vy >= Vx) {
+                        for (int i = Vx; i <= Vy; i++) {
+                            memory[index + j] = registers[Vx + j];
+                            j++;
+                        }
+                    } else {
+                        for (int i = Vy; i < Vx; i++) {
+                            memory[index + j] = registers[Vy + j];
+                            j++;
+                        }
                     }
                 } else if ((opcode & 0x000F) == 3) {
                     int Vx = (opcode & 0x0F00) >> 8;
                     int Vy = (opcode & 0x00F0) >> 4;
                     int j = 0;
-                    for (int i = Vx; i <= Vy; i++) {
-                        registers[Vx + j] = memory[index + j];
-                        j++;
+                    if (Vy >= Vx) {
+                        for (int i = Vx; i <= Vy; i++) {
+                            registers[Vx + j] = memory[index + j];
+                            j++;
+                        }
+                    } else {
+                        for (int i = Vy; i < Vx; i++) {
+                            registers[Vy + j] = memory[index + j];
+                            j++;
+                        }
                     }
                 } else handleUnknownOpcode();
             }
