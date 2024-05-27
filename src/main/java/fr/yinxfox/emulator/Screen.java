@@ -211,4 +211,8 @@ public class Screen extends Canvas {
     public void setSelectedPlane(int selectedPlane) {
         this.selectedPlane = selectedPlane;
     }
+
+    public int getSelectedPlane() {
+        return selectedPlane;
+    }
 }

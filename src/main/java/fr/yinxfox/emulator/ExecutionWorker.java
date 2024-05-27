@@ -381,6 +381,7 @@ public class ExecutionWorker extends Thread {
                 registers[Vx] = (new Random()).nextInt(256) & 0x00FF & octet;
             }
             case 0xD -> {
+                //fixme: must be reworked
                 if ((opcode & 0x000F) != 0) {
                     int Vx = (opcode & 0x0F00) >> 8;
                     int Vy = (opcode & 0x00F0) >> 4;
@@ -423,17 +424,23 @@ public class ExecutionWorker extends Thread {
                         int yPos = registers[Vy] % Screen.getHEIGHT();
 
                         registers[0xF] = 0;
+                        int ramPointer = index;
 
-                        for (int row = 0; row < 16; row++) {
-                            int spriteOctet = (memory[index + row * 2] << 8) + memory[index + row * 2 + 1];
-                            boolean collisionLine = false;
-                            for (int col = 0; col < 16; col++) {
-                                int spritePixel = spriteOctet & (0x8000 >> col);
-                                if (spritePixel != 0) {
-                                    collisionLine |= video.drawSchip8(xPos, col, yPos, row);
+                        for (int plane = 1; plane <= 2; plane++) {
+                            if ((video.getSelectedPlane() & plane) != 0) {
+                                for (int row = 0; row < 16; row++) {
+                                    int spriteOctet = (memory[ramPointer] << 8) + memory[ramPointer + 1];
+                                    ramPointer += 2;
+                                    boolean collisionLine = false;
+                                    for (int col = 0; col < 16; col++) {
+                                        int spritePixel = spriteOctet & (0x8000 >> col);
+                                        if (spritePixel != 0) {
+                                            collisionLine |= video.drawSchip8(xPos, col, yPos, row);
+                                        }
+                                    }
+                                    if (collisionLine) registers[0xF]++;
                                 }
                             }
-                            if (collisionLine) registers[0xF]++;
                         }
                     }
                 }
