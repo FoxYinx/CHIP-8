@@ -218,6 +218,7 @@ public class ExecutionWorker extends Thread {
                 if (registers[Vx] != octet) pc += 2;
             }
             case 0x5 -> {
+                //fixme: the order of Vx and Vy must be ignored
                 if ((opcode & 0x000F) == 0) {
                     int Vx = (opcode & 0x0F00) >> 8;
                     int Vy = (opcode & 0x00F0) >> 4;
