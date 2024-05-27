@@ -188,7 +188,7 @@ public class ExecutionWorker extends Thread {
                     video.enableHighResolutionMode();
                 } else if ((opcode & 0xFFF0) == 0x00D0) {
                     int N = opcode & 0x000F;
-                    System.out.println("Scroll up by " + N + " pixels");
+                    video.scrollUp(N);
                 } else if ((opcode & 0xFFF0) == 0x00C0) {
                     int N = opcode & 0x000F;
                     video.scrollDown(N);
@@ -328,6 +328,7 @@ public class ExecutionWorker extends Thread {
             }
             case 0xA -> index = opcode & 0x0FFF;
             case 0xB -> {
+                //TODO: add a quirk toggle
                 if (Launcher.getHardware() == Hardware.SCHIP8) {
                     int Vx = (opcode & 0x0F00) >> 8;
                     int address = opcode & 0x0FFF;

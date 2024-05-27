@@ -124,6 +124,22 @@ public class Screen extends Canvas {
         return collision;
     }
 
+    public void scrollUp(int offset) {
+        int gap = (highResolutionMode) ? offset : offset * 2;
+        for (int i = 0; i < WIDTH; i++) {
+            for (int j = 0; j < HEIGHT - gap; j++) {
+                if ((selectedPlane & 1) == 1) plane1[i][j] = plane1[i][j + gap];
+                if ((selectedPlane & 2) == 2) plane2[i][j] = plane2[i][j + gap];
+            }
+        }
+        for (int i = 0; i < WIDTH; i++) {
+            for (int j = HEIGHT - gap; j < HEIGHT; j++) {
+                if ((selectedPlane & 1) == 1) plane1[i][j] = 0;
+                if ((selectedPlane & 2) == 2) plane2[i][j] = 0;
+            }
+        }
+    }
+
     public void scrollDown(int offset) {
         int gap = (highResolutionMode) ? offset : offset * 2;
         for (int i = 0; i < WIDTH; i++) {
