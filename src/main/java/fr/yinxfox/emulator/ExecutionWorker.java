@@ -328,7 +328,6 @@ public class ExecutionWorker extends Thread {
             }
             case 0xA -> index = opcode & 0x0FFF;
             case 0xB -> {
-                //TODO: add a quirk toggle
                 if (Launcher.getHardware() == Hardware.SCHIP8) {
                     int Vx = (opcode & 0x0F00) >> 8;
                     int address = opcode & 0x0FFF;
