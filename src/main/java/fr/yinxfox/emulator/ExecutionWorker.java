@@ -397,22 +397,28 @@ public class ExecutionWorker extends Thread {
                     }
 
                     registers[0xF] = 0;
+                    int ramPointer = index;
 
-                    for (int row = 0; row < height; row++) {
-                        int spriteOctet = memory[index + row];
-                        boolean collisionLine = false;
-                        for (int col = 0; col < 8; col++) {
-                            int spritePixel = spriteOctet & (0x80 >> col);
-                            if (spritePixel != 0) {
-                                if (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) {
-                                    boolean collision = video.drawChip8(xPos, col, yPos, row);
-                                    if (collision) registers[0xF] = 1;
-                                } else {
-                                    collisionLine |= video.drawSchip8(xPos, col, yPos, row);
+                    for (int plane = 1; plane < 2; plane++) {
+                        if ((video.getSelectedPlane() & plane) != 0) {
+                            for (int row = 0; row < height; row++) {
+                                int spriteOctet = memory[ramPointer];
+                                ramPointer += 1;
+                                boolean collisionLine = false;
+                                for (int col = 0; col < 8; col++) {
+                                    int spritePixel = spriteOctet & (0x80 >> col);
+                                    if (spritePixel != 0) {
+                                        if (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) {
+                                            boolean collision = video.drawChip8(xPos, col, yPos, row);
+                                            if (collision) registers[0xF] = 1;
+                                        } else {
+                                            collisionLine |= video.drawSchip8(xPos, col, yPos, row, plane);
+                                        }
+                                    }
                                 }
+                                if (collisionLine && (Launcher.getHardware() == Hardware.SCHIP8 || Launcher.getHardware() == Hardware.XOCHIP)) registers[0xF]++;
                             }
                         }
-                        if (collisionLine && (Launcher.getHardware() == Hardware.SCHIP8 || Launcher.getHardware() == Hardware.XOCHIP)) registers[0xF]++;
                     }
                     if ((Launcher.getHardware() == Hardware.SCHIP8 || Launcher.getHardware() == Hardware.XOCHIP) && registers[0xF] > 0 && !video.isHighResolutionMode()) registers[0xF] = 1;
                 } else {
@@ -435,7 +441,7 @@ public class ExecutionWorker extends Thread {
                                     for (int col = 0; col < 16; col++) {
                                         int spritePixel = spriteOctet & (0x8000 >> col);
                                         if (spritePixel != 0) {
-                                            collisionLine |= video.drawSchip8(xPos, col, yPos, row);
+                                            collisionLine |= video.drawSchip8(xPos, col, yPos, row, plane);
                                         }
                                     }
                                     if (collisionLine) registers[0xF]++;

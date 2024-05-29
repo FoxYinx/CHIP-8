@@ -50,9 +50,9 @@ public class Screen extends Canvas {
                     if (plane1[x][y] == 0 && plane2[x][y] == 0) {
                         graphicsContext.setFill(Color.BLACK);
                     } else if (plane1[x][y] == 1 && plane2[x][y] == 0) {
-                        graphicsContext.setFill(Color.BLUE);
+                        graphicsContext.setFill(Color.LIGHTGRAY);
                     } else if (plane1[x][y] == 0 && plane2[x][y] == 1) {
-                        graphicsContext.setFill(Color.GREEN);
+                        graphicsContext.setFill(Color.GREY);
                     } else {
                         graphicsContext.setFill(Color.WHITE);
                     }
@@ -81,16 +81,15 @@ public class Screen extends Canvas {
         return screenPixel == 1;
     }
 
-    public boolean drawSchip8(int xPos, int col, int yPos, int row) {
+    public boolean drawSchip8(int xPos, int col, int yPos, int row, int plane) {
         if (highResolutionMode) {
             if (xPos + col >= plane1.length) return false;
             if (yPos + row >= plane1[0].length) return true;
             int screenPixel = 0;
-            if ((selectedPlane & 1) == 1) {
+            if (plane == 1) {
                 screenPixel |= plane1[xPos + col][yPos + row];
                 plane1[xPos + col][yPos + row] ^= 1;
-            }
-            if ((selectedPlane & 2) == 2) {
+            } else if (plane == 2) {
                 screenPixel |= plane2[xPos + col][yPos + row];
                 plane2[xPos + col][yPos + row] ^= 1;
             }
@@ -100,10 +99,9 @@ public class Screen extends Canvas {
             int y = (yPos + row) * 2;
             if (x >= plane1.length || y >= plane1[0].length) return false;
             int collision = 0;
-            if ((selectedPlane & 1) == 1) {
+            if (plane == 1) {
                 collision = getCollision(x, y, collision, plane1);
-            }
-            if ((selectedPlane & 2) == 2) {
+            } else if (plane == 2) {
                 collision = getCollision(x, y, collision, plane2);
             }
 
