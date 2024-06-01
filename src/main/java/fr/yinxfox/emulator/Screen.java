@@ -13,8 +13,7 @@ public class Screen extends Canvas {
 
     private final GraphicsContext graphicsContext;
 
-    private static int[][] plane1 = new int[WIDTH][HEIGHT];
-    private static int[][] plane2 = new int[WIDTH][HEIGHT];
+    private static int[][] plane = new int[WIDTH][HEIGHT];
     private boolean highResolutionMode = false;
     private int selectedPlane = 0;
 
@@ -25,18 +24,22 @@ public class Screen extends Canvas {
         this.graphicsContext = this.getGraphicsContext2D();
         setSelectedPlane(3);
         clear();
+        setSelectedPlane(1);
     }
 
     public void clear() {
-        if ((selectedPlane & 1) == 1) plane1 = new int[WIDTH][HEIGHT];
-        if ((selectedPlane & 2) == 2) plane2 = new int[WIDTH][HEIGHT];
+        for (int i = 0; i < WIDTH; i++) {
+            for (int j = 0; j < HEIGHT; j++) {
+                plane[i][j] &= ~selectedPlane;
+            }
+        }
     }
 
     public void render() {
         if (Launcher.getHardware() != Hardware.XOCHIP) {
             for (int x = 0; x < WIDTH; x++) {
                 for (int y = 0; y < HEIGHT; y++) {
-                    if (plane1[x][y] == 1) {
+                    if (plane[x][y] == 1) {
                         graphicsContext.setFill(Color.WHITE);
                     } else {
                         graphicsContext.setFill(Color.BLACK);
@@ -47,14 +50,12 @@ public class Screen extends Canvas {
         } else {
             for (int x = 0; x < WIDTH; x++) {
                 for (int y = 0; y < HEIGHT; y++) {
-                    if (plane1[x][y] == 0 && plane2[x][y] == 0) {
-                        graphicsContext.setFill(Color.BLACK);
-                    } else if (plane1[x][y] == 1 && plane2[x][y] == 0) {
-                        graphicsContext.setFill(Color.DARKGRAY);
-                    } else if (plane1[x][y] == 0 && plane2[x][y] == 1) {
-                        graphicsContext.setFill(Color.GREY);
-                    } else {
-                        graphicsContext.setFill(Color.WHITE);
+                    int bit = plane[x][y];
+                    switch (bit) {
+                        case 0 -> graphicsContext.setFill(Color.BLACK);
+                        case 1 -> graphicsContext.setFill(Color.WHITE);
+                        case 2 -> graphicsContext.setFill(Color.BLUE);
+                        case 3 -> graphicsContext.setFill(Color.PURPLE);
                     }
                     graphicsContext.fillRect(x * SCALE, y * SCALE, SCALE, SCALE);
                 }
@@ -75,61 +76,67 @@ public class Screen extends Canvas {
     }
 
     public boolean drawChip8(int xPos, int col, int yPos, int row) {
-        if (xPos + col >= plane1.length || yPos + row >= plane1[0].length) return false;
-        int screenPixel = plane1[xPos + col][yPos + row];
-        plane1[xPos + col][yPos + row] ^= 1;
+        if (xPos + col >= plane.length || yPos + row >= plane[0].length) return false;
+        int screenPixel = plane[xPos + col][yPos + row];
+        plane[xPos + col][yPos + row] ^= 1;
         return screenPixel == 1;
     }
 
-    public boolean drawSchip8(int xPos, int col, int yPos, int row, int plane) {
+    public boolean drawSchip8(int xPos, int col, int yPos, int row, int selectedPlane) {
+        int x = xPos + col;
+        int y = yPos + row;
         if (highResolutionMode) {
-            if (xPos + col >= plane1.length) return false;
-            if (yPos + row >= plane1[0].length) return true;
+            if (Launcher.getHardware() == Hardware.XOCHIP) {
+                x = x % WIDTH;
+                y = y % HEIGHT;
+            } else {
+                if (xPos + col >= plane.length) return false;
+                if (yPos + row >= plane[0].length) return true;
+            }
             int screenPixel = 0;
-            if (plane == 1) {
-                screenPixel |= plane1[xPos + col][yPos + row];
-                plane1[xPos + col][yPos + row] ^= 1;
-            } else if (plane == 2) {
-                screenPixel |= plane2[xPos + col][yPos + row];
-                plane2[xPos + col][yPos + row] ^= 1;
+            if (selectedPlane == 1) {
+                screenPixel = plane[x][y] & 0b01;
+                plane[x][y] ^= 0b01;
+            } else if (selectedPlane == 2) {
+                screenPixel = plane[x][y] & 0b10;
+                plane[x][y] ^= 0b10;
             }
-            return screenPixel == 1;
+            return screenPixel > 0;
         } else {
-            int x = (xPos + col) * 2;
-            int y = (yPos + row) * 2;
-            if (x >= plane1.length || y >= plane1[0].length) return false;
+            x *= 2;
+            y *= 2;
+            if (Launcher.getHardware() == Hardware.XOCHIP) {
+                x = x % WIDTH;
+                y = y % HEIGHT;
+            } else if (x >= plane.length || y >= plane[0].length) return false;
             int collision = 0;
-            if (plane == 1) {
-                collision = getCollision(x, y, collision, plane1);
-            } else if (plane == 2) {
-                collision = getCollision(x, y, collision, plane2);
+            if (selectedPlane == 1) {
+                collision = (plane[x][y] | plane[x][y + 1] | plane[x + 1][y] | plane[x + 1][y + 1]) & 0b01;
+                plane[x][y] ^= 0b01;
+                plane[x][y + 1] ^= 0b01;
+                plane[x + 1][y] ^= 0b01;
+                plane[x + 1][y + 1] ^= 0b01;
+            } else if (selectedPlane == 2) {
+                collision = (plane[x][y] | plane[x][y + 1] | plane[x + 1][y] | plane[x + 1][y + 1]) & 0b10;
+                plane[x][y] ^= 0b10;
+                plane[x][y + 1] ^= 0b10;
+                plane[x + 1][y] ^= 0b10;
+                plane[x + 1][y + 1] ^= 0b10;
             }
-
-            return collision == 1;
+            return collision > 0;
         }
-    }
-
-    private int getCollision(int x, int y, int collision, int[][] plane) {
-        collision |= plane[x][y] | plane[x][y + 1] | plane[x + 1][y] | plane[x + 1][y + 1];
-        plane[x][y] ^= 1;
-        plane[x][y + 1] ^= 1;
-        plane[x + 1][y] ^= 1;
-        plane[x + 1][y + 1] ^= 1;
-        return collision;
     }
 
     public void scrollUp(int offset) {
         int gap = (highResolutionMode) ? offset : offset * 2;
         for (int i = 0; i < WIDTH; i++) {
             for (int j = 0; j < HEIGHT - gap; j++) {
-                if ((selectedPlane & 1) == 1) plane1[i][j] = plane1[i][j + gap];
-                if ((selectedPlane & 2) == 2) plane2[i][j] = plane2[i][j + gap];
+                plane[i][j] = (plane[i][j] & ~selectedPlane) | (plane[i][j + gap] & selectedPlane);
             }
         }
         for (int i = 0; i < WIDTH; i++) {
             for (int j = HEIGHT - gap; j < HEIGHT; j++) {
-                if ((selectedPlane & 1) == 1) plane1[i][j] = 0;
-                if ((selectedPlane & 2) == 2) plane2[i][j] = 0;
+                plane[i][j] &= ~selectedPlane;
             }
         }
     }
@@ -138,14 +145,12 @@ public class Screen extends Canvas {
         int gap = (highResolutionMode) ? offset : offset * 2;
         for (int i = 0; i < WIDTH; i++) {
             for (int j = HEIGHT - 1; j >= gap; j--) {
-                if ((selectedPlane & 1) == 1) plane1[i][j] = plane1[i][j - gap];
-                if ((selectedPlane & 2) == 2) plane2[i][j] = plane2[i][j - gap];
+                plane[i][j] = (plane[i][j] & ~selectedPlane) | (plane[i][j - gap] & selectedPlane);
             }
         }
         for (int i = 0; i < WIDTH; i++) {
             for (int j = 0; j < gap; j++) {
-                if ((selectedPlane & 1) == 1) plane1[i][j] = 0;
-                if ((selectedPlane & 2) == 2) plane2[i][j] = 0;
+                plane[i][j] &= ~selectedPlane;
             }
         }
     }
@@ -153,24 +158,28 @@ public class Screen extends Canvas {
     public void scrollLeft() {
         int gap = (highResolutionMode) ? 4 : 8;
         for (int i = gap; i < WIDTH; i++) {
-            if ((selectedPlane & 1) == 1) plane1[i - gap] = plane1[i];
-            if ((selectedPlane & 2) == 2) plane2[i - gap] = plane2[i];
+            for (int j = 0; j < HEIGHT; j++) {
+                plane[i - gap][j] = (plane[i - gap][j] & ~selectedPlane) | (plane[i][j] & selectedPlane);
+            }
         }
         for (int i = WIDTH - gap; i < WIDTH; i++) {
-            if ((selectedPlane & 1) == 1) plane1[i] = new int[HEIGHT];
-            if ((selectedPlane & 2) == 2) plane2[i] = new int[HEIGHT];
+            for (int j = 0; j < HEIGHT; j++) {
+                plane[i][j] &= ~selectedPlane;
+            }
         }
     }
 
     public void scrollRight() {
         int gap = (highResolutionMode) ? 4 : 8;
         for (int i = WIDTH - gap - 1; i >= 0; i--) {
-            if ((selectedPlane & 1) == 1) System.arraycopy(plane1[i], 0, plane1[i + gap], 0, HEIGHT);
-            if ((selectedPlane & 2) == 2) System.arraycopy(plane2[i], 0, plane2[i + gap], 0, HEIGHT);
+            for (int j = 0; j < HEIGHT; j++) {
+                plane[i + gap][j] = (plane[i + gap][j] & ~selectedPlane) | (plane[i][j] & selectedPlane);
+            }
         }
         for (int i = 0; i < gap; i++) {
-            if ((selectedPlane & 1) == 1) plane1[i] = new int[HEIGHT];
-            if ((selectedPlane & 2) == 2) plane2[i] = new int[HEIGHT];
+            for (int j = 0; j < HEIGHT; j++) {
+                plane[i][j] &= ~selectedPlane;
+            }
         }
     }
 
@@ -178,8 +187,7 @@ public class Screen extends Canvas {
         WIDTH = Launcher.getHardware().getWidth();
         HEIGHT = Launcher.getHardware().getHeight();
         SCALE = Launcher.getHardware().getScale();
-        plane1 = new int[WIDTH][HEIGHT];
-        plane2 = new int[WIDTH][HEIGHT];
+        plane = new int[WIDTH][HEIGHT];
     }
 
     public void disableHighResolutionMode() {
@@ -199,7 +207,7 @@ public class Screen extends Canvas {
     }
 
     public static int[][] getVideo() {
-        return plane1;
+        return plane;
     }
 
     public boolean isHighResolutionMode() {

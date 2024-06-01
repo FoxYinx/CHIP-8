@@ -164,7 +164,6 @@ public class ExecutionWorker extends Thread {
                 }
             }
         }
-
         opcode = (memory[pc] << 8) | memory[pc + 1];
         pc += 2;
 
@@ -399,7 +398,7 @@ public class ExecutionWorker extends Thread {
                     registers[0xF] = 0;
                     int ramPointer = index;
 
-                    for (int plane = 1; plane < 2; plane++) {
+                    for (int plane = 1; plane <= 2; plane++) {
                         if ((video.getSelectedPlane() & plane) != 0) {
                             for (int row = 0; row < height; row++) {
                                 int spriteOctet = memory[ramPointer];

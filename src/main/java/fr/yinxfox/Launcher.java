@@ -47,7 +47,7 @@ public class Launcher extends Application {
         this.timeline.stop();
         if (this.executionWorker != null) this.executionWorker.interrupt();
         this.video.clear();
-        this.video.setSelectedPlane(3);
+        this.video.setSelectedPlane(1);
         this.executionWorker = new ExecutionWorker(filePath, this.video, this.keyboard, this.soundMaker);
         if (isDebuggerEnabled) {
             debugger.setExecutionWorker(executionWorker);

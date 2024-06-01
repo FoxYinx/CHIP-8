@@ -210,8 +210,8 @@ public class Debugger extends Thread {
         createLabel("Reg Value", registers);
         createLabel("---------", registers);
         createLabel("PC 0x0200", registers);
-        createLabel("         ", registers);
         createLabel("I   0x000", registers);
+        createLabel("         ", registers);
         for (int i = 0; i < 16; i++) {
             createLabel("v" + String.format("%01X", i) + " 0x0000", registers);
         }
