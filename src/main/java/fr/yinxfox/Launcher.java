@@ -19,6 +19,7 @@ import java.io.File;
 public class Launcher extends Application {
 
     //TODO: Add XO-CHIP support
+    //TODO: Add same quirks as here : http://johnearnest.github.io/Octo/
     //TODO: Change JavaFX display to PixelBuffer (https://foojay.io/today/high-performance-rendering-in-javafx/)
 
     private static Debugger debugger = null;
