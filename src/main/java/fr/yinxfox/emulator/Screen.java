@@ -16,14 +16,14 @@ public class Screen extends Canvas {
     private static int[][] plane = new int[WIDTH][HEIGHT];
     private boolean highResolutionMode = false;
     private int selectedPlane = 0;
-    private ColorPalette colorPalette;
+    private static ColorPalette colorPalette;
 
     public Screen() {
         super(WIDTH * SCALE, HEIGHT * SCALE);
         setFocusTraversable(true);
 
         this.graphicsContext = this.getGraphicsContext2D();
-        this.colorPalette = ColorPalette.GREY;
+        colorPalette = ColorPalette.GREY;
         setSelectedPlane(3);
         clear();
         setSelectedPlane(1);
@@ -225,6 +225,6 @@ public class Screen extends Canvas {
     }
 
     public void setColorPalette(ColorPalette colorPalette) {
-        this.colorPalette = colorPalette;
+        Screen.colorPalette = colorPalette;
     }
 }

@@ -5,6 +5,7 @@ import fr.yinxfox.Launcher;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Random;
 
 public class ExecutionWorker extends Thread {
@@ -58,8 +59,8 @@ public class ExecutionWorker extends Thread {
     private final int[] stack;
     private final int[] rpl;
     private int opcode;
-    private int delayTimer;
-    private int soundTimer;
+    private static int delayTimer;
+    private static int soundTimer;
     private final Screen video;
     private final Keyboard keyboard;
     private final SoundMaker soundMaker;
@@ -76,8 +77,8 @@ public class ExecutionWorker extends Thread {
         this.stack = (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) ? new int[12] : new int[16];
         this.rpl = (Launcher.getHardware() == Hardware.XOCHIP) ? new int[16] : new int[8];
         this.sp = 0;
-        this.delayTimer = 0;
-        this.soundTimer = 0;
+        delayTimer = 0;
+        soundTimer = 0;
         this.opcode = 0x0000;
         System.arraycopy(FONTSET, 0, this.memory, FONTSET_START_ADDRESS, FONTSET_SIZE);
         System.arraycopy(FONTSET_HIGHRES, 0, this.memory, FONTSET_HIGHRES_START_ADDRESS, FONTSET_HIGHRES_SIZE);
@@ -109,8 +110,8 @@ public class ExecutionWorker extends Thread {
         this.stack = (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) ? new int[12] :  new int[16];
         this.rpl = (Launcher.getHardware() == Hardware.XOCHIP) ? new int[16] : new int[8];
         this.sp = 0;
-        this.delayTimer = 0;
-        this.soundTimer = 0;
+        delayTimer = 0;
+        soundTimer = 0;
         this.opcode = 0x0000;
         System.arraycopy(FONTSET, 0, this.memory, FONTSET_START_ADDRESS, FONTSET_SIZE);
         System.arraycopy(FONTSET_HIGHRES, 0, this.memory, FONTSET_HIGHRES_START_ADDRESS, FONTSET_HIGHRES_SIZE);
@@ -145,11 +146,8 @@ public class ExecutionWorker extends Thread {
     }
 
     public void updateTimers() {
-        if (this.delayTimer > 0) --this.delayTimer;
-        if (this.soundTimer > 0) {
-            this.soundMaker.playBuzzer();
-            this.soundTimer--;
-        } else this.soundMaker.stopBuzzer();
+        if (delayTimer > 0) --delayTimer;
+        if (soundTimer > 0) --soundTimer;
     }
 
     public void cycle() throws InterruptedException {
@@ -481,7 +479,11 @@ public class ExecutionWorker extends Thread {
                         video.setSelectedPlane(N);
                     }
                     case 0x02 -> {
-                        System.out.println("Store 16 bytes in audio pattern buffer");
+                        byte[] buffer = new byte[16];
+                        for (int i = 0; i < 16; i++) {
+                            buffer[i] = (byte) memory[index + i];
+                        }
+                        soundMaker.setBuffer(buffer);
                     }
                     case 0x07 -> {
                         int Vx = (opcode & 0x0F00) >> 8;
@@ -536,6 +538,7 @@ public class ExecutionWorker extends Thread {
                         int Vx = (opcode & 0x0F00) >> 8;
                         soundMaker.setPitch(registers[Vx]);
                     }
+                    //TODO: must add a quirk toggle for the increase of index for 0xFX055 and 0xFX65
                     case 0x55 -> {
                         int Vx = (opcode & 0x0F00) >> 8;
                         System.arraycopy(registers, 0, memory, index, Vx + 1);
@@ -595,7 +598,7 @@ public class ExecutionWorker extends Thread {
         return delayTimer;
     }
 
-    public int getSoundTimer() {
+    public static int getSoundTimer() {
         return soundTimer;
     }
 

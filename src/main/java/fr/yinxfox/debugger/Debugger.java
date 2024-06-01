@@ -157,7 +157,7 @@ public class Debugger extends Thread {
                 int delayTimer = executionWorker.getDelayTimer();
                 registers.get(i).setText("DT     " + String.format("%02d", delayTimer));
             } else if (registers.get(i).getText().startsWith("ST")) {
-                int soundTimer = executionWorker.getSoundTimer();
+                int soundTimer = ExecutionWorker.getSoundTimer();
                 registers.get(i).setText("ST     " + String.format("%02d", soundTimer));
             }
         }

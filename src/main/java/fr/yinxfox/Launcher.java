@@ -19,7 +19,6 @@ import java.io.File;
 public class Launcher extends Application {
 
     //TODO: Add XO-CHIP support
-    //TODO: Add a color palette selector
     //TODO: Change JavaFX display to PixelBuffer (https://foojay.io/today/high-performance-rendering-in-javafx/)
 
     private static Debugger debugger = null;
@@ -29,6 +28,7 @@ public class Launcher extends Application {
     private static Hardware hardware = Hardware.CHIP8;
     private Stage mainStage;
     private static MenuBar menuBar = null;
+    private static boolean audioPlaying;
 
     private final Keyboard keyboard;
     private Screen video;
@@ -191,6 +191,7 @@ public class Launcher extends Application {
                             if (this.executionWorker != null) {
                                 Platform.runLater(this.video::render);
                                 this.executionWorker.updateTimers();
+                                audioPlaying = (ExecutionWorker.getSoundTimer() > 0);
                             }
                         })
         );
@@ -254,5 +255,9 @@ public class Launcher extends Application {
 
     public static double getFPS() {
         return FPS;
+    }
+
+    public static boolean isAudioPlaying() {
+        return audioPlaying;
     }
 }
