@@ -139,10 +139,27 @@ public class Launcher extends Application {
         enableDebugger.setOnAction(_ -> toggleDebugger());
         menuDebug.getItems().add(enableDebugger);
 
+        ToggleGroup colorToggle = new ToggleGroup();
+        Menu menuColor = new Menu("Color");
+        RadioMenuItem grayItem = new RadioMenuItem(ColorPalette.GREY.getName());
+        grayItem.setSelected(true);
+        grayItem.setOnAction(_ -> video.setColorPalette(ColorPalette.GREY));
+        menuColor.getItems().add(grayItem);
+        RadioMenuItem magentaCyanItem = new RadioMenuItem(ColorPalette.MAGENTACYAN.getName());
+        magentaCyanItem.setOnAction(_ -> video.setColorPalette(ColorPalette.MAGENTACYAN));
+        menuColor.getItems().add(magentaCyanItem);
+        RadioMenuItem blackAndWhiteItem = new RadioMenuItem(ColorPalette.BLACKANDWHITE.getName());
+        blackAndWhiteItem.setOnAction(_ -> video.setColorPalette(ColorPalette.BLACKANDWHITE));
+        menuColor.getItems().add(blackAndWhiteItem);
+        grayItem.setToggleGroup(colorToggle);
+        magentaCyanItem.setToggleGroup(colorToggle);
+        blackAndWhiteItem.setToggleGroup(colorToggle);
+
         menuBar.getMenus().add(menuFile);
         menuBar.getMenus().add(menuHardware);
         menuBar.getMenus().add(menuSpeed);
         menuBar.getMenus().add(menuDebug);
+        menuBar.getMenus().add(menuColor);
     }
 
     private void changeHardware(Hardware hd) {

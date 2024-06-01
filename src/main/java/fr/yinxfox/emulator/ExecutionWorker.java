@@ -380,7 +380,6 @@ public class ExecutionWorker extends Thread {
                 registers[Vx] = (new Random()).nextInt(256) & 0x00FF & octet;
             }
             case 0xD -> {
-                //fixme: must be reworked
                 if ((opcode & 0x000F) != 0) {
                     int Vx = (opcode & 0x0F00) >> 8;
                     int Vy = (opcode & 0x00F0) >> 4;

@@ -16,12 +16,14 @@ public class Screen extends Canvas {
     private static int[][] plane = new int[WIDTH][HEIGHT];
     private boolean highResolutionMode = false;
     private int selectedPlane = 0;
+    private ColorPalette colorPalette;
 
     public Screen() {
         super(WIDTH * SCALE, HEIGHT * SCALE);
         setFocusTraversable(true);
 
         this.graphicsContext = this.getGraphicsContext2D();
+        this.colorPalette = ColorPalette.GREY;
         setSelectedPlane(3);
         clear();
         setSelectedPlane(1);
@@ -52,10 +54,10 @@ public class Screen extends Canvas {
                 for (int y = 0; y < HEIGHT; y++) {
                     int bit = plane[x][y];
                     switch (bit) {
-                        case 0 -> graphicsContext.setFill(Color.BLACK);
-                        case 1 -> graphicsContext.setFill(Color.WHITE);
-                        case 2 -> graphicsContext.setFill(Color.BLUE);
-                        case 3 -> graphicsContext.setFill(Color.PURPLE);
+                        case 0 -> graphicsContext.setFill(colorPalette.getBackground());
+                        case 1 -> graphicsContext.setFill(colorPalette.getFirstPlane());
+                        case 2 -> graphicsContext.setFill(colorPalette.getSecondPlane());
+                        case 3 -> graphicsContext.setFill(colorPalette.getOverlap());
                     }
                     graphicsContext.fillRect(x * SCALE, y * SCALE, SCALE, SCALE);
                 }
@@ -220,5 +222,9 @@ public class Screen extends Canvas {
 
     public int getSelectedPlane() {
         return selectedPlane;
+    }
+
+    public void setColorPalette(ColorPalette colorPalette) {
+        this.colorPalette = colorPalette;
     }
 }
