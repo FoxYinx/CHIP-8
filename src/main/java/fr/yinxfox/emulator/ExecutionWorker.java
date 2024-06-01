@@ -541,18 +541,14 @@ public class ExecutionWorker extends Thread {
                     case 0x55 -> {
                         int Vx = (opcode & 0x0F00) >> 8;
                         System.arraycopy(registers, 0, memory, index, Vx + 1);
-                        if (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) {
-                            index += Vx + 1;
-                        }
+                        if (!(Launcher.getHardware() == Hardware.SCHIP8)) index += Vx + 1;
                     }
                     case 0x65 -> {
                         int Vx = (opcode & 0x0F00) >> 8;
                         for (int i = 0; i <= Vx; i++) {
                             registers[i] = memory[index + i] & 0xFF;
                         }
-                        if (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) {
-                            index += Vx + 1;
-                        }
+                        if (!(Launcher.getHardware() == Hardware.SCHIP8)) index += Vx + 1;
                     }
                     case 0x75 -> {
                         int Vx = (opcode & 0x0F00) >> 8;

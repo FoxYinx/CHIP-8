@@ -50,7 +50,7 @@ public class Screen extends Canvas {
                     if (plane1[x][y] == 0 && plane2[x][y] == 0) {
                         graphicsContext.setFill(Color.BLACK);
                     } else if (plane1[x][y] == 1 && plane2[x][y] == 0) {
-                        graphicsContext.setFill(Color.LIGHTGRAY);
+                        graphicsContext.setFill(Color.DARKGRAY);
                     } else if (plane1[x][y] == 0 && plane2[x][y] == 1) {
                         graphicsContext.setFill(Color.GREY);
                     } else {
