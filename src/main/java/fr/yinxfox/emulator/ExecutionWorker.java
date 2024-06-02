@@ -613,4 +613,8 @@ public class ExecutionWorker extends Thread {
     public Object getPause() {
         return pause;
     }
+
+    public Screen getVideo() {
+        return video;
+    }
 }

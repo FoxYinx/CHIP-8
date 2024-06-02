@@ -3,6 +3,7 @@ package fr.yinxfox.debugger;
 import fr.yinxfox.Launcher;
 import fr.yinxfox.emulator.ExecutionWorker;
 import fr.yinxfox.emulator.Hardware;
+import fr.yinxfox.emulator.Screen;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -172,6 +173,8 @@ public class Debugger extends Thread {
                     stack.get(i + j).setText(String.format("%02d", j) + "  " + String.format("0x%03X", executionWorker.getStack()[j]));
                 }
                 i += stackSize - 1;
+            } else if (stack.get(i).getText().startsWith("PLANE")) {
+                stack.get(i).setText("PLANE  0" + executionWorker.getVideo().getSelectedPlane());
             }
         }
     }
