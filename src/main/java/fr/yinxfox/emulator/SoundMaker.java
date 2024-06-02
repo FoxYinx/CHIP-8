@@ -13,7 +13,7 @@ public class SoundMaker extends Thread {
 
     private int pitch;
     private float freq;
-    private byte[] buffer;
+    private byte[] buffer = new byte[16];
 
     private volatile int prevAudioTone;
     private volatile int prevSoundDelay;
@@ -35,12 +35,17 @@ public class SoundMaker extends Thread {
                 }
                 try {
                     int timer = Math.max(1, Byte.toUnsignedInt((byte) ExecutionWorker.getSoundTimer()));
-                    tone(this.buffer);
+                    if (this.buffer != null) tone(this.buffer);
                     prevAudioTone = pitch;
                     prevSoundDelay = timer;
                 } catch (LineUnavailableException e) {
                     e.printStackTrace();
                 }
+            }
+            try {
+                Thread.sleep(0, 10);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
         }
     }
@@ -63,6 +68,7 @@ public class SoundMaker extends Thread {
 
     public void setPitch(int pitch) {
         this.pitch = pitch;
+        this.freq = pitchToFreq(pitch);
     }
 
     public int getPitch() {
