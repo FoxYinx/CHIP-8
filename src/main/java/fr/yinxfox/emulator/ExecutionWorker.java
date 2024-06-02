@@ -617,4 +617,8 @@ public class ExecutionWorker extends Thread {
     public Screen getVideo() {
         return video;
     }
+
+    public SoundMaker getSoundMaker() {
+        return soundMaker;
+    }
 }

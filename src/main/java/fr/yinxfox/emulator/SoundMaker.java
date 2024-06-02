@@ -65,6 +65,10 @@ public class SoundMaker extends Thread {
         this.pitch = pitch;
     }
 
+    public int getPitch() {
+        return pitch;
+    }
+
     private float pitchToFreq(int pitch) {
         return (float) (4000 * Math.pow(2, (pitch - 64f) / 48f));
     }

@@ -174,7 +174,7 @@ public class Debugger extends Thread {
                 }
                 i += stackSize - 1;
             } else if (stack.get(i).getText().startsWith("PLANE")) {
-                stack.get(i).setText("PLANE  0" + executionWorker.getVideo().getSelectedPlane());
+                stack.get(i).setText("PLANE   " + executionWorker.getVideo().getSelectedPlane());
             }
         }
     }
@@ -188,6 +188,7 @@ public class Debugger extends Thread {
             memory.get(j).setText(String.format("%04X", i) + " " + String.format("%04X", (executionWorker.getMemory()[i] << 8) | executionWorker.getMemory()[i + 1]));
             j++;
         }
+        memory.get(24).setText("PITCH  " + executionWorker.getSoundMaker().getPitch());
     }
 
     private void updateOpcodes() {
@@ -240,7 +241,7 @@ public class Debugger extends Thread {
         createLabel("         ", stack);
         createLabel("         ", stack);
         createLabel("         ", stack);
-        createLabel("PLANE  01", stack);
+        createLabel("PLANE   1", stack);
 
         if (stackSize == 12) {
             for (int i = 17; i < 17 + 4; i++) {
@@ -273,6 +274,9 @@ public class Debugger extends Thread {
         for (int i = initialPc - nbMemory; i <= initialPc + nbMemory; i += 2) {
             createLabel(String.format("%04X", i) + " 0000", memory);
         }
+        createLabel("         ", memory);
+        createLabel("         ", memory);
+        createLabel("PITCH   0", memory);
 
         for (int i = 0; i < memory.size(); i++) {
             this.grid.add(memory.get(i), 2, i);
