@@ -5,7 +5,6 @@ import fr.yinxfox.Launcher;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Random;
 
 public class ExecutionWorker extends Thread {
@@ -422,30 +421,28 @@ public class ExecutionWorker extends Thread {
                     }
                     if ((Launcher.getHardware() == Hardware.SCHIP8 || Launcher.getHardware() == Hardware.XOCHIP) && registers[0xF] > 0 && !video.isHighResolutionMode()) registers[0xF] = 1;
                 } else {
-                    if (video.isHighResolutionMode()){
-                        int Vx = (opcode & 0x0F00) >> 8;
-                        int Vy = (opcode & 0x00F0) >> 4;
+                    int Vx = (opcode & 0x0F00) >> 8;
+                    int Vy = (opcode & 0x00F0) >> 4;
 
-                        int xPos = registers[Vx] % Screen.getWIDTH();
-                        int yPos = registers[Vy] % Screen.getHEIGHT();
+                    int xPos = registers[Vx] % Screen.getWIDTH();
+                    int yPos = registers[Vy] % Screen.getHEIGHT();
 
-                        registers[0xF] = 0;
-                        int ramPointer = index;
+                    registers[0xF] = 0;
+                    int ramPointer = index;
 
-                        for (int plane = 1; plane <= 2; plane++) {
-                            if ((video.getSelectedPlane() & plane) != 0) {
-                                for (int row = 0; row < 16; row++) {
-                                    int spriteOctet = (memory[ramPointer] << 8) + memory[ramPointer + 1];
-                                    ramPointer += 2;
-                                    boolean collisionLine = false;
-                                    for (int col = 0; col < 16; col++) {
-                                        int spritePixel = spriteOctet & (0x8000 >> col);
-                                        if (spritePixel != 0) {
-                                            collisionLine |= video.drawSchip8(xPos, col, yPos, row, plane);
-                                        }
+                    for (int plane = 1; plane <= 2; plane++) {
+                        if ((video.getSelectedPlane() & plane) != 0) {
+                            for (int row = 0; row < 16; row++) {
+                                int spriteOctet = (memory[ramPointer] << 8) + memory[ramPointer + 1];
+                                ramPointer += 2;
+                                boolean collisionLine = false;
+                                for (int col = 0; col < 16; col++) {
+                                    int spritePixel = spriteOctet & (0x8000 >> col);
+                                    if (spritePixel != 0) {
+                                        collisionLine |= video.drawSchip8(xPos, col, yPos, row, plane);
                                     }
-                                    if (collisionLine) registers[0xF]++;
                                 }
+                                if (collisionLine) registers[0xF]++;
                             }
                         }
                     }

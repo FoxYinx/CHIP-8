@@ -234,9 +234,13 @@ public class Debugger extends Thread {
         for (int i = 0; i < 16; i++) {
             createLabel(String.format("%02d", i) + "  0x000", stack);
         }
+        createLabel("         ", stack);
+        createLabel("         ", stack);
+        createLabel("         ", stack);
+        createLabel("PLANE  01", stack);
 
         if (stackSize == 12) {
-            for (int i = 17; i < stack.size(); i++) {
+            for (int i = 17; i < 17 + 4; i++) {
                 stack.get(i).setText("");
             }
         }
@@ -249,11 +253,11 @@ public class Debugger extends Thread {
     public void updateStackDisplay() {
         stackSize = (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) ? 12 : 16;
         if (stackSize == 12) {
-            for (int i = 17; i < stack.size(); i++) {
+            for (int i = 17; i < 17 + 4; i++) {
                 stack.get(i).setText("");
             }
         } else {
-            for (int i = 17; i < stack.size(); i++) {
+            for (int i = 17; i < 17 + 4; i++) {
                 stack.get(i).setText(String.format("%02d", i - 5) + "  0x000");
             }
         }
