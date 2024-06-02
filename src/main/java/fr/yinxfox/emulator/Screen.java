@@ -23,7 +23,6 @@ public class Screen extends Canvas {
         setFocusTraversable(true);
 
         this.graphicsContext = this.getGraphicsContext2D();
-        colorPalette = ColorPalette.GREY;
         setSelectedPlane(3);
         clear();
         setSelectedPlane(1);
@@ -224,7 +223,7 @@ public class Screen extends Canvas {
         return selectedPlane;
     }
 
-    public void setColorPalette(ColorPalette colorPalette) {
+    public static void setColorPalette(ColorPalette colorPalette) {
         Screen.colorPalette = colorPalette;
     }
 }

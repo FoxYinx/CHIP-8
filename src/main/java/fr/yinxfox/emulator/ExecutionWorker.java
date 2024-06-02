@@ -291,19 +291,19 @@ public class ExecutionWorker extends Thread {
                         int Vx = (opcode & 0x0F00) >> 8;
                         int Vy = (opcode & 0x00F0) >> 4;
                         registers[Vx] |= registers[Vy];
-                        if (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) registers[0xF] = 0;
+                        if (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES || Launcher.isClearVfQuirk()) registers[0xF] = 0;
                     }
                     case 0x2 -> {
                         int Vx = (opcode & 0x0F00) >> 8;
                         int Vy = (opcode & 0x00F0) >> 4;
                         registers[Vx] &= registers[Vy];
-                        if (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) registers[0xF] = 0;
+                        if (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES || Launcher.isClearVfQuirk()) registers[0xF] = 0;
                     }
                     case 0x3 -> {
                         int Vx = (opcode & 0x0F00) >> 8;
                         int Vy = (opcode & 0x00F0) >> 4;
                         registers[Vx] ^= registers[Vy];
-                        if (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) registers[0xF] = 0;
+                        if (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES || Launcher.isClearVfQuirk()) registers[0xF] = 0;
                     }
                     case 0x4 -> {
                         int Vx = (opcode & 0x0F00) >> 8;
@@ -323,7 +323,9 @@ public class ExecutionWorker extends Thread {
                     case 0x6 -> {
                         int Vx = (opcode & 0x0F00) >> 8;
                         int Vy = (opcode & 0x00F0) >> 4;
-                        if (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) registers[Vx] = registers[Vy];
+                        if (!Launcher.isShiftQuirk() && Launcher.getHardware() != Hardware.SCHIP8) {
+                            registers[Vx] = registers[Vy];
+                        }
                         int VfValue = registers[Vx] & 1;
                         registers[Vx] >>>= 1;
                         registers[0xF] = VfValue;
@@ -339,7 +341,9 @@ public class ExecutionWorker extends Thread {
                     case 0xE -> {
                         int Vx = (opcode & 0x0F00) >> 8;
                         int Vy = (opcode & 0x00F0) >> 4;
-                        if (Launcher.getHardware() == Hardware.CHIP8 || Launcher.getHardware() == Hardware.CHIP8HIRES) registers[Vx] = registers[Vy];
+                        if (!Launcher.isShiftQuirk() && Launcher.getHardware() != Hardware.SCHIP8) {
+                            registers[Vx] = registers[Vy];
+                        }
                         int VfValue = (registers[Vx] & 0x80) >> 7;
                         registers[Vx] <<= 1;
                         registers[Vx] &= 0xFF;
@@ -538,18 +542,17 @@ public class ExecutionWorker extends Thread {
                         int Vx = (opcode & 0x0F00) >> 8;
                         soundMaker.setPitch(registers[Vx]);
                     }
-                    //TODO: must add a quirk toggle for the increase of index for 0xFX055 and 0xFX65
                     case 0x55 -> {
                         int Vx = (opcode & 0x0F00) >> 8;
                         System.arraycopy(registers, 0, memory, index, Vx + 1);
-                        if (!(Launcher.getHardware() == Hardware.SCHIP8)) index += Vx + 1;
+                        if (!(Launcher.getHardware() == Hardware.SCHIP8) && !Launcher.isLoadAndSaveQuirk()) index += Vx + 1;
                     }
                     case 0x65 -> {
                         int Vx = (opcode & 0x0F00) >> 8;
                         for (int i = 0; i <= Vx; i++) {
                             registers[i] = memory[index + i] & 0xFF;
                         }
-                        if (!(Launcher.getHardware() == Hardware.SCHIP8)) index += Vx + 1;
+                        if (!(Launcher.getHardware() == Hardware.SCHIP8) && !Launcher.isLoadAndSaveQuirk()) index += Vx + 1;
                     }
                     case 0x75 -> {
                         int Vx = (opcode & 0x0F00) >> 8;

@@ -30,6 +30,9 @@ public class Launcher extends Application {
     private Stage mainStage;
     private static MenuBar menuBar = null;
     private static boolean audioPlaying;
+    private static boolean shiftQuirk = false;
+    private static boolean loadAndSaveQuirk = false;
+    private static boolean clearVfQuirk = false;
 
     private final Keyboard keyboard;
     private Screen video;
@@ -39,6 +42,8 @@ public class Launcher extends Application {
     private String filePath;
 
     public Launcher() {
+        Screen.setColorPalette(ColorPalette.GREY);
+
         this.keyboard = new Keyboard(this);
         this.executionWorker = null;
         this.soundMaker = new SoundMaker();
@@ -144,23 +149,35 @@ public class Launcher extends Application {
         Menu menuColor = new Menu("Color");
         RadioMenuItem grayItem = new RadioMenuItem(ColorPalette.GREY.getName());
         grayItem.setSelected(true);
-        grayItem.setOnAction(_ -> video.setColorPalette(ColorPalette.GREY));
+        grayItem.setOnAction(_ -> Screen.setColorPalette(ColorPalette.GREY));
         menuColor.getItems().add(grayItem);
         RadioMenuItem magentaCyanItem = new RadioMenuItem(ColorPalette.MAGENTACYAN.getName());
-        magentaCyanItem.setOnAction(_ -> video.setColorPalette(ColorPalette.MAGENTACYAN));
+        magentaCyanItem.setOnAction(_ -> Screen.setColorPalette(ColorPalette.MAGENTACYAN));
         menuColor.getItems().add(magentaCyanItem);
         RadioMenuItem blackAndWhiteItem = new RadioMenuItem(ColorPalette.BLACKANDWHITE.getName());
-        blackAndWhiteItem.setOnAction(_ -> video.setColorPalette(ColorPalette.BLACKANDWHITE));
+        blackAndWhiteItem.setOnAction(_ -> Screen.setColorPalette(ColorPalette.BLACKANDWHITE));
         menuColor.getItems().add(blackAndWhiteItem);
         grayItem.setToggleGroup(colorToggle);
         magentaCyanItem.setToggleGroup(colorToggle);
         blackAndWhiteItem.setToggleGroup(colorToggle);
+
+        Menu menuQuirk = new Menu("Quirk");
+        RadioMenuItem shiftItem = new RadioMenuItem("<<= and >>= modify vx in place and ignore vy");
+        shiftItem.setOnAction(_ -> shiftQuirk = !shiftQuirk);
+        RadioMenuItem loadSaveItem = new RadioMenuItem("load and store operations leave i unchanged");
+        loadSaveItem.setOnAction(_ -> loadAndSaveQuirk = !loadAndSaveQuirk);
+        RadioMenuItem vFItem = new RadioMenuItem("clear vF after vx |= vy, vx &= vy, and vx ^= vy");
+        vFItem.setOnAction(_ -> clearVfQuirk = !clearVfQuirk);
+        menuQuirk.getItems().add(shiftItem);
+        menuQuirk.getItems().add(loadSaveItem);
+        menuQuirk.getItems().add(vFItem);
 
         menuBar.getMenus().add(menuFile);
         menuBar.getMenus().add(menuHardware);
         menuBar.getMenus().add(menuSpeed);
         menuBar.getMenus().add(menuDebug);
         menuBar.getMenus().add(menuColor);
+        menuBar.getMenus().add(menuQuirk);
     }
 
     private void changeHardware(Hardware hd) {
@@ -260,5 +277,17 @@ public class Launcher extends Application {
 
     public static boolean isAudioPlaying() {
         return audioPlaying;
+    }
+
+    public static boolean isShiftQuirk() {
+        return shiftQuirk;
+    }
+
+    public static boolean isLoadAndSaveQuirk() {
+        return loadAndSaveQuirk;
+    }
+
+    public static boolean isClearVfQuirk() {
+        return clearVfQuirk;
     }
 }
