@@ -212,8 +212,8 @@ public class Launcher extends Application {
                         _ -> {
                             if (this.executionWorker != null) {
                                 Platform.runLater(this.video::render);
-                                this.executionWorker.updateTimers();
                                 audioPlaying = (ExecutionWorker.getSoundTimer() > 0);
+                                this.executionWorker.updateTimers();
                             }
                         })
         );
