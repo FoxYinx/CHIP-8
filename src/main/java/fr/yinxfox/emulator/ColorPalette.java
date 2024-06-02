@@ -6,7 +6,8 @@ public enum ColorPalette {
 
     GREY("Shades of Gray", Color.BLACK, Color.DARKGRAY, Color.DIMGRAY, Color.WHITE),
     MAGENTACYAN("Magenta / Cyan", Color.BLACK, Color.MAGENTA, Color.CYAN, Color.WHITE),
-    BLACKANDWHITE("Black and White", Color.BLACK, Color.WHITE, Color.GRAY, Color.DIMGRAY);
+    BLACKANDWHITE("Black and White", Color.BLACK, Color.WHITE, Color.GRAY, Color.DIMGRAY),
+    ORANGE("Octo Classic", Color.web("996600"), Color.web("FFCC00"), Color.web("FF6600"), Color.web("662200"));
 
     private final String name;
     private final Color background;

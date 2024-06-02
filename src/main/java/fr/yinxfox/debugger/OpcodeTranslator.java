@@ -118,7 +118,7 @@ public class OpcodeTranslator {
                 if ((opcode & 0x000F) != 0) {
                     return "SPRITE v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " v" + String.format("%01X", (opcode & 0x00F0) >> 4) + " " + String.format("%01X", opcode & 0x000F);
                 } else {
-                    return "SPRITE v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " v" + String.format("%01X", (opcode & 0x00F0) >> 4) + " 0";
+                    return "SPRITE v" + String.format("%01X", (opcode & 0x0F00) >> 8) + " v" + String.format("%01X", (opcode & 0x00F0) >> 4) + " 16";
                 }
             }
             case 0xE -> {

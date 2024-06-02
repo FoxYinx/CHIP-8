@@ -157,9 +157,13 @@ public class Launcher extends Application {
         RadioMenuItem blackAndWhiteItem = new RadioMenuItem(ColorPalette.BLACKANDWHITE.getName());
         blackAndWhiteItem.setOnAction(_ -> Screen.setColorPalette(ColorPalette.BLACKANDWHITE));
         menuColor.getItems().add(blackAndWhiteItem);
+        RadioMenuItem orangeItem = new RadioMenuItem(ColorPalette.ORANGE.getName());
+        orangeItem.setOnAction(_ -> Screen.setColorPalette(ColorPalette.ORANGE));
+        menuColor.getItems().add(orangeItem);
         grayItem.setToggleGroup(colorToggle);
         magentaCyanItem.setToggleGroup(colorToggle);
         blackAndWhiteItem.setToggleGroup(colorToggle);
+        orangeItem.setToggleGroup(colorToggle);
 
         Menu menuQuirk = new Menu("Quirk");
         RadioMenuItem shiftItem = new RadioMenuItem("<<= and >>= modify vx in place and ignore vy");
